@@ -25,10 +25,10 @@ export const Home = () => {
     getUsers();
   }, []);
   
-  console.log('Users: ', users)
+  console.log('Auth: ', auth.user.username)
   return (
     <div className='Home'>
-      If you're here, you're allowed to be here! Mr {auth.user}
+      If you're here, you're allowed to be here! Mr {auth.user.username}
     </div>
   )
 }

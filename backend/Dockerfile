@@ -4,7 +4,7 @@ WORKDIR /app
 
 COPY ./package*.json ./
 
-RUN npm install bcrypt
+RUN npm install bcrypt jsonwebtoken cookie-parser
 
 RUN npm install
 

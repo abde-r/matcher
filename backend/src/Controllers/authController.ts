@@ -1,6 +1,8 @@
 const express = require('express')
 const pool = require('../../database/dbConfig')
 const bcrypt = require('bcrypt')
+const cookieParser = require('cookie-parser')
+const { createToken } = require('../Services/JWT')
 //const { createUserTable } = require('../Models/users/User.ts')
 //const { check, validationResult } = require('express-validator')
 
@@ -9,16 +11,20 @@ const login = async (req: any, res: any) => {
 
   try {
     const { email, password } = req.body
+    console.log(email, password)
     const client = await pool.connect();
     const user = await client.query('SELECT * FROM "User" WHERE email=$1;', [email])
-    console.log('user: ', user.rows)
+    // console.log('user: ', user.rows[0].password)
     if (user.rows.length > 0) {
-      const isPassValid = await bcrypt.compare(user.rows[0].password, password)
+      const isPassValid = await bcrypt.compare(password, user.rows[0].password)
       console.log('bcrypt result: ', isPassValid)
-      if (isPassValid === true)
-        return res.status(200).send({ user })
+      if (isPassValid) {
+        const access_token = createToken(user)
+        res.cookie("access-token", access_token, { maxAge: 60 })
+        return res.status(200).send({ user: user.rows })
+      }
     }
-    res.status(401).send({ 'invalid user': user });
+    res.status(401).send({ error: `User ${email} is invalid!` });
     client.release()
   }
   catch (err) {
@@ -61,29 +67,35 @@ const createUserTable = async (client: any) => {
 };
 
 const signup = async (req: any, res: any) => {
-  const { email, password, username, first_name, last_name, avatar, gender } = req.body;
-
-  // Check if the user already exists in your database
-
-  const hashedPass = await bcrypt.hash(password, 10);
+  const { email, password, username, first_name, last_name, gender } = req.body;
 
   const client = await pool.connect();
+  
+  // Check if the user already exists in your database
+  const emailExists = await client.query('SELECT * FROM "User" WHERE email=$1;', [email])
+  console.log('user: ', emailExists.rows)
+  if (emailExists.rows.length > 0)
+    return res.status(400).send({ error: `User ${email} already exits!` })
 
+  
+  
+  // Register
+  
   try {
     await createUserTable(client);
-
+    
     const insertUserQuery = `
-            INSERT INTO "User" (username, email, password, first_name, last_name, gender)
-            VALUES ($1, $2, $3, $4, $5, $6)
+    INSERT INTO "User" (username, email, password, first_name, last_name, gender)
+    VALUES ($1, $2, $3, $4, $5, $6)
     `;
-
+    
+    const hashedPass = await bcrypt.hash(password, 10);
     const result = await client.query(insertUserQuery, [
       username,
       email,
       hashedPass,
       first_name,
       last_name,
-      // avatar,
       gender,
     ]);
 

@@ -11,19 +11,19 @@ export const Login = () => {
 
   const navigate = useNavigate()
   const _login = async () => {
-    // try {
-    //   console.log('input data: ', inputData)
-    //   const res = await axios.post(`http://localhost:8080/auth/login`, {
-    //     'email': inputData.email,
-    //     'password': inputData.password
-    //   }, { withCredentials: true })
-    //   console.log('res', res.data)
-    // }
-    // catch (err) {
-    //   console.error('errrror: ', err)
-    // }
-    auth.login(1337)
-    navigate('/', { replace: true })
+    try {
+      console.log('input data: ', inputData)
+      const res = await axios.post(`http://localhost:8080/auth/login`, {
+        'email': inputData.email,
+        'password': inputData.password
+      }, { withCredentials: true })
+      console.log('res', res.data.user[0])
+      auth.login(res.data.user[0])
+      navigate('/', { replace: true })
+    }
+    catch (err) {
+      console.error('errrror: ', err)
+    }
   }
 
   return (
