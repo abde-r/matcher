@@ -6,10 +6,6 @@ services:
     restart: always
     env_file:
       - .env
-      #environment:
-      #POSTGRES_DB: matchadb
-      #POSTGRES_USER: stronk
-      #POSTGRES_PASSWORD: pass
     ports:
       - 5432:5432
     networks:
@@ -17,16 +13,16 @@ services:
     volumes:
       - matcha_dbdata:/var/lib/postgresql/data
 
-  frontend:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
-    container_name: matcha_frontend
-    ports:
-      - 5173:5173
-    restart: always
-    networks:
-      - matcha_network
+  # frontend:
+  #   build:
+  #     context: ./frontend
+  #     dockerfile: Dockerfile
+  #   container_name: matcha_frontend
+  #   ports:
+  #     - 5173:3000
+  #   restart: always
+  #   networks:
+  #     - matcha_network
 
   backend:
     build:
@@ -40,8 +36,8 @@ services:
       - postgresdb
     networks:
       - matcha_network
-    # volumes:
-    #   - ./backend/node_modules
+    volumes:
+      - matcha_dbdata:/app/uploads
 
   pgadmin:
     container_name: pgadmin4
@@ -51,27 +47,24 @@ services:
       - postgresdb
     env_file:
       - .env
-    # environment:
-    #   PGADMIN_DEFAULT_EMAIL: admin@example.com
-    #   PGADMIN_DEFAULT_PASSWORD: admin
     ports:
       - 5050:80
     networks:
       - matcha_network
   
-  nginx:
-    build:
-      context: ./nginx
-      dockerfile: Dockerfile
-    container_name: matcha_nginx
-    ports:
-      - 3000:3000
-    restart: always
-    depends_on:
-      - frontend
-      - backend
-    networks:
-      - matcha_network
+  # nginx:
+  #   build:
+  #     context: ./nginx
+  #     dockerfile: Dockerfile
+  #   container_name: matcha_nginx
+  #   ports:
+  #     - 3000:3000
+  #   restart: always
+  #   depends_on:
+  #     - frontend
+  #     - backend
+  #   networks:
+  #     - matcha_network
 
 networks:
   matcha_network:
