@@ -19,11 +19,20 @@ const getAllUsers = async (req: any, res: any) => {
 
 const me = async (req: any, res: any) => {
   try {
-    res.cookie('testcookie', 'mzyana', {httpOnly: true})
-    console.log('req', req.cookies)
-    const users = await db.SELECT({ table: 'User', columns: [] });
-    console.log('Users: ', users.rows)
-    res.status(200).send({ usssers: users.rows });
+    const { access_token } = req.body;
+    const client = await pool.connect();
+    
+    console.log('access token: ', access_token);
+    const user = await client.query('SELECT * FROM "User" WHERE access_token=$1;', [access_token]);
+
+    if (!user.rows) {
+      return res.status(404).send({message: 'User not found!'});
+    }
+    // res.cookie('testcookie', 'mzyana', {httpOnly: true})
+    console.log('req', user.rows[0].accesstoken, req.cookies['access-token'])
+    // const users = await db.SELECT({ table: 'User', columns: [] });
+    // console.log('Users: ', users.rows)
+    return res.status(200).send({ usssers: user.rows[0] });
   }
   catch (err) {
     // console.error('Error getting users: ', err)

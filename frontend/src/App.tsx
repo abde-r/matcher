@@ -10,6 +10,7 @@ import { Navbar } from './components/Navbar/Navbar'
 import { Profile } from './pages/Profile/Profile'
 import { ResetPass } from './pages/Auth/ResetPass'
 import { ForgotPass } from './pages/Auth/ForgotPass'
+import { ProceedSignup } from './pages/Auth/ProceedSignup'
 
 axios.defaults.baseURL = `http://localhost:8080`
 axios.defaults.withCredentials = true
@@ -19,7 +20,7 @@ function App() {
   return (
     <div className='app'>
       {/* <AuthProvider> */}
-        <Navbar />
+        {/* <Navbar /> */}
         <Routes>
           {/* <Route path='/' element={<RequireAuth><Home /></RequireAuth>} /> */}
           <Route path='/' element={<Home />} />
@@ -28,6 +29,7 @@ function App() {
           <Route path='/forgot-pass' element={ <ForgotPass /> } />
           <Route path='/reset-pass/:token' element={<ResetPass />} />
           <Route path='/signup' element={<Signup />} />
+          <Route path='/proceed-signup' element={<ProceedSignup />} />
         </Routes>
       {/* </AuthProvider> */}
     </div>

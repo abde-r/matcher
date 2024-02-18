@@ -41,35 +41,37 @@ const nodemailer = require('nodemailer');
 const login = async (req: any, res: any) => {
 
   try {
-    const { email, password } = req.body;
-    console.log(email, password);
+    const { username, password } = req.body;
+    console.log(username, password);
     const client = await pool.connect();
-    const user = await client.query('SELECT * FROM "User" WHERE email=$1;', [email]);
+    const user = await client.query('SELECT * FROM "User" WHERE username=$1;', [username]);
     
-    console.log('User', user.rows[0])
+    console.log('User', user.rows)
     if (user.rows.length > 0) {
       const isPassValid = await bcrypt.compare(password, user.rows[0].password);
       console.log('bcrypt result: ', isPassValid);
 
       if (!isPassValid)
-        res.send({ error: 'Invalid Password!' });
+        return res.status(401).send({ error: 'Incorrect Password!' });
 
       // if (isPassValid) {
         // const access_token = createToken(user.rows[0]);
-        const access_token: any = jwt.sign({email: email}, process.env.ACCESS_TOKEN, {expiresIn: '1m'});
-        res.cookie("access-token", access_token, { httpOnly: true }, { maxAge: 6 * 1000 });
+        const access_token: any = jwt.sign({username: username}, process.env.ACCESS_TOKEN, {expiresIn: '10m'});
+        res.cookie("access-token", access_token, { httpOnly: true }, { maxAge: 6 * 10000 });
+        console.log('-----------', user.rows[0].access_token, access_token)
+        client.query(`UPDATE "User" SET access_token = $1 WHERE username = $2;`, [access_token, username])
         // Print cookies received in the subsequent request
         // console.log('Cookies:', req.cookies);
         return res.status(200).send({ user: user.rows });
       // }
     }
     else
-      res.send({ error: `Invalid Email or Username!` });
+      return res.status(401).send({ error: `Invalid Username!` });
     client.release();
   }
   catch (err) {
     console.error('Error executing query', err);
-    res.status(500).send('Internal Server Error');
+    return res.status(500).send('Internal Server Error');
   }
 };
 
@@ -95,6 +97,7 @@ const createUserTable = async (client: any) => {
                 avatar VARCHAR(150),
                 gender BOOLEAN NOT NULL,
                 biography VARCHAR(100),
+                access_token VARCHAR(500),
                 created_at TIMESTAMPTZ DEFAULT NOW()
             )
     `;
@@ -113,10 +116,10 @@ const signup = async (req: any, res: any) => {
   const client = await pool.connect();
   
   // Check if the user already exists in your database
-  const emailExists = await client.query('SELECT * FROM "User" WHERE email=$1;', [email])
-  console.log('user: ', emailExists.rows)
-  if (emailExists.rows.length > 0)
-    return res.status(400).send({ error: `User ${email} already exits!` })
+  // const emailExists = await client.query('SELECT * FROM "User" WHERE email=$1;', [email])
+  // console.log('user: ', emailExists.rows)
+  // if (emailExists.rows.length > 0)
+  //   return res.status(400).send({ error: `User ${email} already exits!` })
 
   
   
@@ -124,11 +127,13 @@ const signup = async (req: any, res: any) => {
   
   try {
     await createUserTable(client);
+    const access_token: any = jwt.sign({username: username}, process.env.ACCESS_TOKEN, {expiresIn: '1m'});
+    res.cookie("access-token", access_token, { httpOnly: true }, { maxAge: 6 * 1000 });
     // db.CREATE({ table: 'Test', columns: [{name: 'username', type: 'VARCHAR(150)', default: 'NOT NULL'}] });
     
     const insertUserQuery = `
-    INSERT INTO "User" (username, email, password, first_name, last_name, gender)
-    VALUES ($1, $2, $3, $4, $5, $6)
+    INSERT INTO "User" (username, email, password, first_name, last_name, gender, access_token)
+    VALUES ($1, $2, $3, $4, $5, $6, $7)
     `;
     
     const hashedPass = await bcrypt.hash(password, 10);
@@ -139,6 +144,7 @@ const signup = async (req: any, res: any) => {
       first_name,
       last_name,
       gender,
+      access_token,
     ]);
 
     console.log('User created successfully');

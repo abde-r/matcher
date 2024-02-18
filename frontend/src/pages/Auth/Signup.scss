@@ -1,58 +1,79 @@
 .Signup {
-    display: flex;
-    flex-direction: column;
-    width: 400px;
-    margin: auto;
-    padding: 20px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  }
-  
-  .Signup .col-1,
-  .Signup .col-2,
-  .Signup .col-3 {
-    display: flex;
-    flex-direction: column;
-    margin-bottom: 15px;
-  }
-  
-  .Signup input[type='text'],
-  .Signup input[type='email'],
-  .Signup input[type='password'],
-  .Signup button {
-    padding: 10px;
-    margin-bottom: 10px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    width: calc(100% - 22px);
-  }
-  
-  .Signup .roomType {
-    display: flex;
-    margin-bottom: 15px;
-  }
-  
-  .Signup .roomType span {
-    margin-right: 10px;
-  }
-  
-  .Signup .submit {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-  
-  .Signup .submit button {
-    width: 100%;
-    background-color: #007bff;
-    color: white;
-    cursor: pointer;
-  }
-  
-  .Signup .submit a {
-    margin-top: 10px;
-    color: #007bff;
-    text-decoration: none;
-  }
-  
+  background-color: lightgray;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 95%;
+  height: 95%;
+  margin: auto;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-family: 'Open Sans';
+}
+
+.Signup .container {
+  display: flex;
+  flex-direction: column;
+  width: 300px;
+  margin: 30px auto;
+  padding: 20px;
+  align-items: center;
+  text-align: center;
+}
+
+.Signup h2 {
+  border-bottom: 2px solid rgb(155,4,117);
+}
+.Signup input {
+  padding: 10px;
+  margin: 10px;
+  border: 2px solid transparent;
+  border-radius: 2px;
+  width: 70%;
+  background-color: transparent;
+  border-bottom: 2px solid dimgray;
+  outline: none;
+  font-size: 17px;
+}
+
+.proceed {
+  background: #9b0475;
+  background: linear-gradient(90deg, rgba(155,4,117,1) 0%, rgba(197,197,197,1) 100%, rgba(211,211,211,1) 100%);order: none;
+  border-radius: 5px;
+  padding: 15px;
+  width: 70%;
+  color: black;
+  cursor: pointer;
+  border: none;
+  outline: none;
+  text-decoration: none;
+  font-size: 17px;
+}
+
+.proceed:hover {
+  background: #d615a6b5;
+  transition-duration: 1s;
+}
+
+.gender {
+  display: flex;
+}
+
+.Signup p {
+  font-size: 15px;
+  font-weight: 500;
+  margin: 0;
+}
+
+.goLogin {
+  color: #007bff;
+  text-decoration: none;
+  align-self: flex-end;
+  margin-top: 5px;
+}
+
+.SignupForms {
+  margin: 20px 0;
+}
