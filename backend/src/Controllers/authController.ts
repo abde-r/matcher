@@ -57,7 +57,7 @@ const login = async (req: any, res: any) => {
       // if (isPassValid) {
         // const access_token = createToken(user.rows[0]);
         const access_token: any = jwt.sign({username: username}, process.env.ACCESS_TOKEN, {expiresIn: '10m'});
-        res.cookie("access-token", access_token, { httpOnly: true }, { maxAge: 6 * 10000 });
+        res.cookie("access-token", access_token/*, { httpOnly: true }*/, { maxAge: 6 * 10000 });
         console.log('-----------', user.rows[0].access_token, access_token)
         client.query(`UPDATE "User" SET access_token = $1 WHERE username = $2;`, [access_token, username])
         // Print cookies received in the subsequent request

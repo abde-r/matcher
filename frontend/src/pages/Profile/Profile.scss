@@ -1,0 +1,108 @@
+@import url('https://fonts.googleapis.com/css2?family=Fira+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=IBM+Plex+Sans+Thai:wght@100;200;300;400;500;600;700&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&family=Rubik:ital,wght@0,300..900;1,300..900&display=swap');
+
+.Profile {
+    display: flex;
+    flex-direction: column;
+    // background-color: darkgray;
+    padding: 25px;
+    font-family: 'Rubik';
+}
+
+.account-infos {
+    display: flex;
+    padding: 10px 45px;
+    background-color: #e0e0e0;
+    border-radius: 20px;
+    width: 75%;
+    margin: 0 75px;
+}
+
+.pfp {
+    margin: 0 25px;
+    width: 10%;
+    align-items: center;
+}
+
+.pfp img {
+    width: 150px;
+    height: 150px;
+    border-radius: 100%;
+}
+
+.personal-infos {
+    margin: 0 25px;
+    width: 80%;
+    align-items: center;
+}
+
+.settings-heart {
+    width: 10%;
+    align-self: center;
+    margin: 25px 0;
+}
+
+.settings-icon {
+    color: #78979D;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+.heart-icon {
+    color: #e37ecc;
+    font-size: 30px;
+    cursor: pointer;
+}
+
+.heart-icon:hover {
+    color: #ed4747;
+    transition: 1s;
+}
+
+.interests {
+    background-color: #78979D;
+    color: aliceblue;
+    padding: 10px;
+    // width: 4%;
+    border-radius: 10px;
+    // border: 2px solid #81d4d8;
+}
+
+.row-personal-info {
+    background-color: #e0e0e0;
+    border-radius: 20px;
+    padding: 2px 20px;
+    width: 80%;
+    margin: 20px auto;
+}
+
+.row-personal-info h2 {
+    border-bottom: 2px solid #777;
+    color: #1692B9;
+    text-transform: capitalize;
+}
+
+.row-personal-info p {
+    margin: 10px;
+    font-size: 18px;
+}
+
+.row-personal-info .content {
+    display: flex;
+}
+
+.row-personal-info img {
+    width: 150px;
+    height: 120px;
+    border-radius: 10%;
+    margin: 20px;
+}
+
+.onlineIcon {
+    font-size: 13px;
+    color: #27ac27;
+}
+
+.offlineIcon {
+    font-size: 13px;
+    color: #ff6e6e;
+}

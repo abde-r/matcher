@@ -29,7 +29,7 @@ const me = async (req: any, res: any) => {
       return res.status(404).send({message: 'User not found!'});
     }
     // res.cookie('testcookie', 'mzyana', {httpOnly: true})
-    console.log('req', user.rows[0].accesstoken, req.cookies['access-token'])
+    console.log('req', user.rows[0].access_token, req.cookies['access-token'])
     // const users = await db.SELECT({ table: 'User', columns: [] });
     // console.log('Users: ', users.rows)
     return res.status(200).send({ usssers: user.rows[0] });

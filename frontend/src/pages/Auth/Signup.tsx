@@ -67,16 +67,32 @@ import { useState } from 'react';
 import validator from 'validator';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircleRight } from '@fortawesome/free-solid-svg-icons';
-import './Signup.scss'
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import './Signup.scss'
 
-export const Signup = () => {
-  const [inputData, setInputData] = useState({
-    email: '',
+export const Signup = ({ setAuth }: any) => {
+
+  const [inputData, setInputData] = useState<any>({
+    // firstName: '',
+    // lastName: '',
     username: '',
+    // gender: 1,
+    email: '',
+    // preferences: [],
+    // interests: [],
+    // currentInterest: '',
     password: '',
     confirmPassword: ''
-  });
+  })
+  // const [proceed, setProceed] = useState<boolean>(false);
+
+  // const [inputData, setInputData] = useState({
+  //   email: '',
+  //   username: '',
+  //   password: '',
+  //   confirmPassword: ''
+  // });
   const navigate = useNavigate()
 
   const [validationErrors, setValidationErrors] = useState<any>({});
@@ -93,12 +109,25 @@ export const Signup = () => {
       errors.email = 'Invalid email format';
     }
 
+    if (inputData.email === 'gg') {
+      errors.username = 'Email Already in use';
+    }
+
     if (validator.isEmpty(inputData.username)) {
       errors.username = 'Username is required';
     }
 
+    if (inputData.username === 'gg') {
+      errors.username = 'Username Already in use';
+    }
+
     if (validator.isEmpty(inputData.password)) {
       errors.password = 'Password is required';
+    }
+
+    if (!validator.isStrongPassword(inputData.password)) {
+      // minLength: 8, minLowercase: 1, minUppercase: 1, minNumbers: 1, minSymbols: 1}
+      errors.password = 'Weak Password, try something with lowecase, uppercase, numbers and symbols';
     }
 
     if (validator.isEmpty(inputData.confirmPassword)) {
@@ -111,32 +140,92 @@ export const Signup = () => {
     return Object.keys(errors).length === 0;
   };
 
-  const _signup = () => {
+  // const handleGenderChange = (e: any) => {
+  //   const x = e.target.value === 'Male' ? 1 : 0
+  //   setInputData({ ...inputData, gender: x})
+  // }
+
+  // const handleSelectChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+  //   const selectedValue = event.target.value;
+  //   if (!inputData.preferences.includes(selectedValue)) {
+  //     setInputData((prevState: any) => ({
+  //       ...prevState,
+  //       preferences: [...prevState.preferences, selectedValue]
+  //     }));
+  //   }
+  // };
+
+  // const handleInterestsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   setInputData((prevState: any) => ({
+  //     ...prevState,
+  //     currentInterest: e.target.value
+  //   }));
+  // };
+
+  // const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+  //   if (e.key === 'Enter') {
+  //     const newInterest = inputData.currentInterest.trim();
+  //     if (newInterest) {
+  //       setInputData((prevState: any) => ({
+  //         ...prevState,
+  //         interests: [...prevState.interests, newInterest],
+  //         currentInterest: ''
+  //       }));
+  //     }
+  //   }
+  // };
+
+  // const handleKeyDown = (e) => {
+  //   if (e.key === 'Enter') {
+  //     const newInterests = [...inputData.interests, inputData.password];
+  //     setInputData({ ...inputData, interests: newInterests, password: '' });
+  //   }
+  // };
+  
+  // const _proceed = () => {
+  //   if (validateInputs())
+  //     setProceed(true);
+  // }
+
+  const _signup = async () => {
     if (validateInputs()) {
-      navigate('/proceed-signup')
+      try {
+        await axios.post(`http://localhost:8080/auth/signup`, {
+          username: inputData.username,
+          email: inputData.email,
+          password: inputData.password
+        }, { withCredentials: true })
+        setAuth({ token: true });
+        navigate('/')
+      }
+      catch (err) {
+        console.error(err)
+      }
     }
   };
+
+  console.log('wewww', inputData)
 
   return (
     <div className="Signup">
       <div className="container">
-        <h2>Signup</h2>
-        <p>Welcome to matcherX! Please enter your info to get access.</p>
-        <p>You have an <a className="goLogin" href="/login">account?</a></p>
-        <div className="SignupForms">
-          <input type="email" name="email" placeholder="Email" value={inputData.email} style={validationErrors.email && { border: '2px solid red', borderRadius: '10px'}} onChange={handleInputChange} />
-          {validationErrors.email && <p style={{ color: 'red', fontSize: '12px' }}>*{validationErrors.email}</p>}
-          <input type="text" name="username" placeholder="Username" value={inputData.username} style={validationErrors.username && { border: '2px solid red', borderRadius: '10px'}} onChange={handleInputChange} />
-          {validationErrors.username && <p style={{ color: 'red', fontSize: '12px' }}>*{validationErrors.username}</p>}
-          <input type="password" name="password" placeholder="Password" value={inputData.password} style={validationErrors.password && { border: '2px solid red', borderRadius: '10px'}} onChange={handleInputChange} />
-          {validationErrors.password && <p style={{ color: 'red', fontSize: '12px' }}>*{validationErrors.password}</p>}
-          <input type="password" name="confirmPassword" placeholder="Confirm Password" value={inputData.confirmPassword} style={validationErrors.confirmPassword && { border: '2px solid red', borderRadius: '10px'}} onChange={handleInputChange} />
-          {validationErrors.confirmPassword && <p style={{ color: 'red', fontSize: '12px' }}>*{validationErrors.confirmPassword}</p>}
-        </div>
-        <a className="proceed" onClick={_signup}><FontAwesomeIcon icon={faCircleRight} /> Proceed</a>
+            <h2>Signup</h2>
+            <p>Welcome to matcherX! Please enter your informations to get access.</p>
+            <p>You have an <a className="goLogin" href="/login">account?</a></p>
+            <div className="SignupForms">
+              <input type="email" name="email" placeholder="Email" value={inputData.email} style={validationErrors.email && { border: '2px solid red', borderRadius: '10px'}} onChange={handleInputChange} />
+              {validationErrors.email && <p style={{ color: 'red', fontSize: '12px' }}>*{validationErrors.email}</p>}
+              <input type="text" name="username" placeholder="Username" value={inputData.username} style={validationErrors.username && { border: '2px solid red', borderRadius: '10px'}} onChange={handleInputChange} />
+              {validationErrors.username && <p style={{ color: 'red', fontSize: '12px' }}>*{validationErrors.username}</p>}
+              <input type="password" name="password" placeholder="Password" value={inputData.password} style={validationErrors.password && { border: '2px solid red', borderRadius: '10px'}} onChange={handleInputChange} />
+              {validationErrors.password && <p style={{ color: 'red', fontSize: '12px' }}>*{validationErrors.password}</p>}
+              <input type="password" name="confirmPassword" placeholder="Confirm Password" value={inputData.confirmPassword} style={validationErrors.confirmPassword && { border: '2px solid red', borderRadius: '10px'}} onChange={handleInputChange} />
+              {validationErrors.confirmPassword && <p style={{ color: 'red', fontSize: '12px' }}>*{validationErrors.confirmPassword}</p>}
+            </div>
+            <a className="proceed" onClick={_signup}><FontAwesomeIcon className='submit-circle' icon={faCircleRight} />Signup</a>
+            {/* <a className="proceed" onClick={_signup}><FontAwesomeIcon icon={faCircleRight} /> Proceed</a> */}
       </div>
     </div>
   );
 };
 
-export default Signup;

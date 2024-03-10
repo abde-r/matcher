@@ -51,7 +51,6 @@ export const Home = () => {
   // console.log('Auth: ', auth.user.username)
   return (
     <div className='Home'>
-      If you're here, you're allowed to be here! Mr
       <div className="div-slogan">
         <div className="home-text">
           <h1>matcherX</h1>

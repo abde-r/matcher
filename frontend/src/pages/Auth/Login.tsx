@@ -6,8 +6,9 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCircleRight } from "@fortawesome/free-regular-svg-icons"
 import validator from "validator";
 import './Login.scss'
+import { BounceLoader } from "react-spinners"
 
-export const Login = () => {
+export const Login = ({ setAuth }: any) => {
 
   const [inputData, setInputData] = useState({ username: '', password: '' });
   const [validationErrors, setValidationErrors] = useState<any>({});
@@ -46,7 +47,8 @@ export const Login = () => {
         }, { withCredentials: true })
         // console.log('res', res)
         // auth.login(res.data.user[0])
-        navigate('/', { replace: true })
+        setAuth({ token: true });
+        navigate('/profile', { replace: true })
       }
       catch (err: any) {
         setLoginError(err.response.data.error);
@@ -68,6 +70,7 @@ export const Login = () => {
         </div>
         { loginError && <span className="loginError">* { loginError }</span> }
         <button onClick={_login}><FontAwesomeIcon icon={faCircleRight} /> Continue</button>
+        {/* <BounceLoader color="#d636c8" speedMultiplier={1.8} /> */}
       </div>
     </div>
   )

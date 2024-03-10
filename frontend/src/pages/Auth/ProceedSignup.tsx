@@ -37,32 +37,72 @@ export const ProceedSignup = () => {
     <div className="Proceed-signup">
       <div className="container">
         <h2>Proceed Signup</h2>
-        <p>This informations will give other users to get to know more about you.</p>
-        <div className="SignupForms">
-            <div className="userNames">
-                <input type="text" placeholder="First name" onChange={(e) => { setInputData({ ...inputData, username: e.target.value }) }} />
-                <input type="text" placeholder="Last name" onChange={(e) => { setInputData({ ...inputData, username: e.target.value }) }} />
+            <p>This informations will give other users to get to know more about you.</p>
+            <div className="SignupForms">
+                <div className="userNames">
+                    <input type="text" placeholder="First name" onChange={(e) => { setInputData({ ...inputData, firstName: e.target.value }) }} />
+                    <input type="text" placeholder="Last name" onChange={(e) => { setInputData({ ...inputData, lastName: e.target.value }) }} />
+                </div>
+                
+
+                <input type="date" placeholder="Birth date" onChange={(e) => { setInputData({ ...inputData, email: e.target.value }) }} />
+                <div className='gender'>
+                    {/* <span>
+                        <input type="radio" name="genderOptions" value="Male" onChange={handleGenderChange} />
+                        <label>Male 👨</label>
+                        
+                    </span>
+                    <span>
+                        <input type="radio" name="genderOptions" value="Female" onChange={handleGenderChange} />
+                        <label>Female 🧕</label>
+                        
+                    </span> */}
+
+                    <label className="rad-label">
+                      <input type="radio" className="rad-input" value='Male' name="genderOptions" onChange={handleGenderChange} />
+                      <div className="rad-design"></div>
+                      <div className="rad-text">🙍‍♂️Male</div>
+                    </label>
+
+                    <label className="rad-label">
+                      <input type="radio" className="rad-input" value='Female' name="genderOptions" onChange={handleGenderChange} />
+                      <div className="rad-design"></div>
+                      <div className="rad-text">🧕Female</div>
+                    </label>
+                </div>
+                <div className="preferences">
+                  <select onChange={handleSelectChange}>
+                    <option hidden>Preferences</option>
+                    <option value='p2'>P1</option>
+                    <option value='p1'>P2</option>
+                  </select>
+                  <div className="selected-preferences">
+                    {
+                      inputData.preferences.map((pr: string, index: number) => {
+                        return (
+                        <div className='selected-preference'>
+                          <p key={index}>{pr}</p>
+                        </div>)
+                      })
+                    }
+                  </div>
+                </div>
+                <div>
+                  <input type="text" placeholder="Interests" value={inputData.currentInterest} onChange={handleInterestsChange} onKeyDown={handleKeyDown} />
+                  {inputData.interests.map((interest: string, index: number) => (
+                    <p key={index}>{interest}</p>
+                  ))}
+                </div>
+                <div className="check-conditions">
+                    <label className="conditions-checkbox">
+                      <input type="checkbox" />
+                      <span>I agree to terms of us</span>
+                    </label>                  
+                </div>
             </div>
-            <input type="date" placeholder="Birth date" onChange={(e) => { setInputData({ ...inputData, email: e.target.value }) }} />
-            <div className='gender'>
-                <span>
-                    <input type="radio" name="genderOptions" value="Male" onChange={handleGenderChange} />
-                    Male
-                </span>
-                <span>
-                    <input type="radio" name="genderOptions" value="Female" onChange={handleGenderChange} />
-                    Female
-                </span>
-            </div>
-            <select>
-                <option hidden>Preferences</option>
-                <option value='p2'>P1</option>
-                <option value='p1'>P2</option>
-            </select>
-            <input type="text" placeholder="Interests" onChange={(e) => { setInputData({ ...inputData, password: e.target.value }) }} />
-        </div>
-        <button onClick={_signup}><FontAwesomeIcon icon={faCircleRight} /> Submit</button>
-      </div>
+            <a className="proceed" onClick={_signup}><FontAwesomeIcon className='submit-circle' icon={faCircleRight} />Submit</a>
+          
+    </div>
     </div>
   )
 }
