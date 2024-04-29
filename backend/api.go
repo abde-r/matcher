@@ -28,7 +28,7 @@ func (s *APIServer) Run() {
 	
 	// ** Registering services here **
 	postService := NewPostService(s.store)
-	postService.RegisterRoutes(router)
+	postService.RegisterRoutes(subrouter)
 
 	log.Fatal(http.ListenAndServe(s.addr, subrouter))
 }

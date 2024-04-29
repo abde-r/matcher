@@ -1,8 +1,8 @@
-build:
-	@go build -o bin/goMatcha
+run:
+	@go run main.go api.go config.go db.go posts.go store.go utils.go types.go
 
-run: build
-	@./bin/goMatcha
+# build:
+# 	@go build -o bin/goMatcha
 
-test:
-	@go test -v ./..
+# test:
+# 	@go test -v ./..

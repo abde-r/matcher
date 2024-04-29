@@ -6,13 +6,15 @@ import (
 )
 
 func main() {
+	log.Println("ENV", Envs)
+
 	cfg := mysql.Config{
 		User: Envs.DBUser,
-		Password: Envs.DBPassword,
-		addr: Envs.DBAddress,
-		db: Envs.DBName,
-		Net: "tcp",
-		AllowNativePassword: true,
+		Passwd: Envs.DBPassword,
+		Addr: Envs.DBAddress,
+		DBName: Envs.DBName,
+		// Net: "tcp",
+		AllowNativePasswords: true,
 		ParseTime: true,
 	}
 
@@ -24,6 +26,6 @@ func main() {
 	}
 
 	store := NewStore(db)
-	server := NewAPIServer(":1337", store)
+	server := NewAPIServer(":"+Envs.Port, store)
 	server.Run()
 }
