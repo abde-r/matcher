@@ -11,22 +11,45 @@ type Storage struct {
 type Store interface {
 
 	// Users
-	CreateUser() error
+	CreateUser(user *User) (*User, error)
+	GetUserById(id string) (*User, error)
 
 	// Posts
 	GetAllPosts() ([]Post, error)
-	GetPost(id string) (*Post, error)
-	CreatePost(p *Post) error
+	GetPostById(id string) (*Post, error)
+	CreatePost(post *Post) error
 }
 
 func NewStore(db *sql.DB) *Storage {
 	return &Storage{db: db}
 }
 
-// *** User
+// *** User Services
+func (s *Storage) GetUserById(id string) (*User, error) {
+	
+	var user User
+	err := s.db.QueryRow("SELECT * FROM user WHERE id = ?", id).Scan(&user.FirstName, &user.LastName, &user.Username, &user.Email, &user.Password, &user.Gender)
+	return &user, err
 
+}
 
-// *** Posts
+func (s *Storage) CreateUser(user *User) (*User, error) {
+	
+	rows, err := s.db.Exec("INSERT INTO user (firstName, lastName, username, email, password, gender) VALUES (?,?,?,?,?,?)", user.FirstName, user.LastName, user.Username, user.Email, user.Password, user.Gender)
+	if err != nil {
+		return nil, err
+	}
+
+	id, err := rows.LastInsertId()
+	if err != nil {
+		return nil, err
+	}
+
+	user.Id = id
+	return user, nil
+}
+
+// *** Posts Services
 func (s *Storage) GetAllPosts() ([]Post, error) {
 	
 	rows, err := s.db.Query("SELECT * FROM post")
@@ -38,7 +61,7 @@ func (s *Storage) GetAllPosts() ([]Post, error) {
 	var posts []Post
 	for rows.Next() {
 		var p Post
-		err := rows.Scan(&p.ID, &p.Title)
+		err := rows.Scan(&p.Id, &p.Title)
 		if err != nil {
 			return nil, err
 		}
@@ -52,16 +75,16 @@ func (s *Storage) GetAllPosts() ([]Post, error) {
 
 }
 
-func (s *Storage) GetPost(id string) (*Post, error) {
+func (s *Storage) GetPostById(id string) (*Post, error) {
 	
-	var p Post
-	err := s.db.QueryRow("SELECT * FROM post WHERE id = ?", id).Scan(&p.ID, &p.Title)
-	return &p, err
+	var post Post
+	err := s.db.QueryRow("SELECT * FROM post WHERE id = ?", id).Scan(&post.Id, &post.Title)
+	return &post, err
 
 }
 
-func (s *Storage) CreatePost(p *Post) error {
+func (s *Storage) CreatePost(post *Post) error {
 
-	_, err := s.db.Exec("INSERT INTO post (title) VALUES (?)", p.Title)
+	_, err := s.db.Exec("INSERT INTO post (title) VALUES (?)", post.Title)
 	return err
 }

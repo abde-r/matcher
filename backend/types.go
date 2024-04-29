@@ -3,15 +3,18 @@ package main
 import "time"
 
 type User struct {
-	ID        	int64  	`json:"id"`
+	Id        	int64  		`json:"id"`
 	FirstName	string  	`json:"firstName"`
 	LastName	string  	`json:"lastName"`
+	Username	string  	`json:"username"`
+	Email		string  	`json:"email"`
 	Password	string  	`json:"password"`
-	CreatedAt time.Time `json:"createdAt"`
+	Gender		string  	`json:"gender"`
+	CreatedAt 	time.Time	`json:"createdAt"`
 }
 
 type Post struct {
-	ID        int64  	`json:"id"`
+	Id        int64  	`json:"id"`
 	Title      string 	`json:"title"`
 	CreatedAt time.Time `json:"createdAt"`
 }

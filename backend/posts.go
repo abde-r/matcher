@@ -38,7 +38,7 @@ func (s *PostService) handleGetPost(w http.ResponseWriter, r *http.Request) {
 
 	vars := mux.Vars(r)
 	id := vars["id"]
-	post, err :=  s.store.GetPost(id)//[...]string{"post1", "post2", "post3"}
+	post, err :=  s.store.GetPostById(id)//[...]string{"post1", "post2", "post3"}
 	log.Println("post", post)
 	if err != nil {
 		WriteJSON(w, http.StatusInternalServerError, ErrorResponse{Error: "Error getting Project"})

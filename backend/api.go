@@ -27,6 +27,9 @@ func (s *APIServer) Run() {
 	log.Println("starting api server at", s.addr)
 	
 	// ** Registering services here **
+	userServices := NewUserService(s.store)
+	userServices.RegisterRoutes(subrouter)
+
 	postService := NewPostService(s.store)
 	postService.RegisterRoutes(subrouter)
 
