@@ -22,4 +22,4 @@ COPY --from=build-stage /api /api
 
 EXPOSE 8000
 
-CMD [ "api" ]
+CMD [ "/api" ]
