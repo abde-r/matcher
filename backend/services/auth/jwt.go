@@ -87,15 +87,15 @@ func validateJWT(t string) (*jwt.Token, error) {
 	})
 }
 
-func CreateJWT(secret []byte, userId int64) (string, error) {
+func CreateJWT(secret []byte, userId int) (string, error) {
 
-	expiration := time.Second * time.Duration(configs.Envs.JWTExpiration)
+	expiration := time.Second * time.Duration(configs.Envs.JWTExpirationInSeconds)
 
-	token := jwt.NewWithClaims(jwt.SigningMethodES256, jwt.MapClaims{
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"userId": strconv.Itoa(int(userId)),
 		"expiresAt": time.Now().Add(expiration).Unix(),
 	})
-
+	
 	tokenString, err := token.SignedString(secret)
 	if err != nil {
 		return "", err

@@ -10,6 +10,7 @@ type User struct {
 	Email		string  	`json:"email"`
 	Password	string  	`json:"-"`
 	Gender		bool  		`json:"gender"`
+	Token		string  	`json:"token"`
 }
 
 type RegisterUserPayload struct {
@@ -21,6 +22,11 @@ type RegisterUserPayload struct {
 	Gender		bool  		`json:"gender" validate:"required"`
 }
 
+type LoginUserPayload struct {
+	Email		string  	`json:"email" validate:"required,email"`
+	Password	string  	`json:"password" validate:"required,min=3,max=50"`
+}
+
 type Post struct {
 	Id        	int  	`json:"id"`
 	Title   	string 	`json:"title"`
@@ -28,10 +34,13 @@ type Post struct {
 }
 
 type UserStore interface {
-	CreateUser(User) error
+	CreateUser(User) (int64, error)
+	UpdateUser(int64, string) (string, error)
 	GetAllUsers() ([]User, error)
 	GetUserById(id int) (*User, error)
 	GetUserByEmail(email string) (*User, error)
 	GetUserByUsername(email string) (*User, error)
+	TokenValidation(token string) bool
 	RegistrationValidation(RegisterUserPayload) bool
+	SendEmail(user_email string);
 }

@@ -2,12 +2,12 @@ package user
 
 import (
 	"fmt"
-	"net/http"
-	"strconv"
-
+	"matchaVgo/configs"
 	"matchaVgo/services/auth"
 	"matchaVgo/types"
 	"matchaVgo/utils"
+	"net/http"
+	"strconv"
 
 	"github.com/go-playground/validator/v10"
 	"github.com/gorilla/mux"
@@ -58,7 +58,8 @@ func (s *UserService) UserRegister(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = s.store.CreateUser(types.User{
+	
+	user_id, err := s.store.CreateUser(types.User{
 		FirstName: user.FirstName,
 		LastName: user.LastName,
 		Username: user.Username,
@@ -70,11 +71,65 @@ func (s *UserService) UserRegister(w http.ResponseWriter, r *http.Request) {
 		utils.WriteError(w, http.StatusInternalServerError, err)
 		return
 	}
+	
+	// Token creation
+	secret := []byte(configs.Envs.JWTSecret)
+	token, err := auth.CreateJWT(secret, int(user_id))
+	// err != nil {
+	// 	utils.WriteError(w, http.StatusInternalServerError, err);
+	// 	return
+	// }
+	
+	// fmt.Print(token)
 
-	utils.WriteJSON(w, http.StatusCreated, nil)
+	s.store.UpdateUser(user_id, token);
+	s.store.SendEmail("spamsama91@gmail.com");
+
+
+	utils.WriteJSON(w, http.StatusCreated, user_id)
 }
 
-func (s *UserService) UserLogin(w http.ResponseWriter, r *http.Request) {}
+func (s *UserService) UserLogin(w http.ResponseWriter, r *http.Request) {
+	var user types.LoginUserPayload
+	if err := utils.ParseJSON(r, &user); err != nil {
+		utils.WriteError(w, http.StatusBadRequest, err)
+		return
+	}
+
+	if err := utils.Validate.Struct(user); err != nil {
+		errors := err.(validator.ValidationErrors)
+		utils.WriteError(w, http.StatusBadRequest, fmt.Errorf("invalid payload: %v", errors))
+		return
+	}
+
+	_user, err := s.store.GetUserByEmail(user.Email)
+	if err != nil {
+		utils.WriteError(w, http.StatusBadRequest, fmt.Errorf("invalid email or password"))
+		return
+	}
+
+	if !auth.ComparePasswords(_user.Password, []byte(user.Password)) {
+		utils.WriteError(w, http.StatusBadRequest, fmt.Errorf("invalid email or password"))
+		return
+	}
+
+	secret := []byte(configs.Envs.JWTSecret)
+	token, err := auth.CreateJWT(secret, _user.Id)
+	if err != nil {
+		utils.WriteError(w, http.StatusInternalServerError, err)
+		return
+	}
+
+	is_valid := s.store.TokenValidation(token);
+	if !is_valid {
+		utils.WriteError(w, http.StatusBadRequest, fmt.Errorf("invalid email or password"))
+		return
+	}
+
+	utils.WriteJSON(w, http.StatusOK, 1);
+
+
+}
 
 func (s *UserService) UsersGet(w http.ResponseWriter, r *http.Request) {
 	users, err := s.store.GetAllUsers()
