@@ -1,8 +1,8 @@
 build:
-	@go build -o bin/matchaVgo cmd/main.go
+	@go build -o bin/matcherx cmd/main.go	
 
 run: build
-	@./bin/matchaVgo
+	@./bin/matcherx
 
 migration:
 	@migrate create -ext sql -dir cmd/migrate/migrations $(filter-out $@,$(MAKECMDGOALS))

@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"matchaVgo/types"
+
 	// "os"
 
 	// "matchaVgo/services/user/template"
@@ -13,14 +14,15 @@ import (
 	// "path/filepath"
 	// "runtime"
 
+	"github.com/jmoiron/sqlx"
 	"gopkg.in/gomail.v2"
 )
 
 type Store struct {
-	db *sql.DB
+	db *sqlx.DB
 }
 
-func NewStore(db *sql.DB) *Store {
+func NewStore(db *sqlx.DB) *Store {
 	return &Store{db: db}
 }
 
@@ -185,7 +187,7 @@ func (s *Store) SendEmail(user_email string) {
 	mail.SetHeader("To", user_email);
 	mail.SetHeader("Subject", "MatcherX account verification");
 
-	body := fmt.Sprintf(`<a href="%s"><b>Clicki 3la had lb3ar!</b></a> <br> <img src="%s" alt="img" />`, "https://abder.vercel.app", "https://media.makeameme.org/created/fact-no-verification.jpg");
+	body := fmt.Sprintf(`<div><a href="%s"><b>Clicki 3la had lb3ar!</b></a> <br> <img src="%s" alt="img" /></div>`, "https://abder.vercel.app", "https://media.makeameme.org/created/fact-no-verification.jpg");
 	mail.SetBody("text/html", body);
 
 	d := gomail.NewDialer("smtp.gmail.com", 587, email, token);

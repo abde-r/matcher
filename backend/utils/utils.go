@@ -3,8 +3,12 @@ package utils
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
+	"os"
+
 	"github.com/go-playground/validator/v10"
+	"gopkg.in/gomail.v2"
 )
 
 type ErrorResponse struct {
@@ -30,4 +34,24 @@ func ParseJSON(r *http.Request, v any) error {
 	}
 
 	return json.NewDecoder(r.Body).Decode(v)
+}
+
+func SendEmail(user_email string) {
+
+	email := "matcherx1337@gmail.com";
+	email_pass := os.Getenv("EMAIL_PASS");
+	
+	mail := gomail.NewMessage();
+	mail.SetHeader("From", email);
+	mail.SetHeader("To", user_email);
+	mail.SetHeader("Subject", "MatcherX account verification");
+
+	body := fmt.Sprintf(`<div><a href="%s"><b>Clicki 3la had lb3ar!</b></a> <br> <img src="%s" alt="img" /></div>`, "https://abder.vercel.app", "https://media.makeameme.org/created/fact-no-verification.jpg");
+	mail.SetBody("text/html", body);
+
+	d := gomail.NewDialer("smtp.gmail.com", 587, email, email_pass);
+	if err := d.DialAndSend(mail); err != nil {
+		log.Print(err);
+	}
+	
 }
