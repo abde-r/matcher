@@ -1,0 +1,41 @@
+.Home {
+    background-color: lightgray;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 95%;
+    height: 95%;
+    margin: auto;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-family: 'Open Sans';
+}
+
+.div-slogan {
+    display: flex;
+    margin: 25px;
+    width: 100%;
+}
+
+.home-text {
+    width: 50%;
+    margin: 25px;
+    font-size: 25px;
+}
+
+.home-text p {
+    margin-right: 100px;
+    font-size: 40px;
+}
+
+.home-img {
+    width: 50%;
+    margin: 20px;
+    text-align: center;
+}
+
+.home-img img {
+    width: 50%;
+}

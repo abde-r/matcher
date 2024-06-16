@@ -1,0 +1,79 @@
+.Login {
+  background-color: lightgray;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 95%;
+  height: 95%;
+  margin: auto;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-family: 'Open Sans';
+}
+
+.Login .container {
+  display: flex;
+  flex-direction: column;
+  width: 300px;
+  margin: 50px auto;
+  padding: 20px;
+  align-items: center;
+  text-align: center;
+}
+
+.Login h2 {
+  border-bottom: 2px solid rgb(155,4,117);
+}
+.Login input[type='text'],
+.Login input[type='password'] {
+  padding: 10px;
+  margin: 15px;
+  border: 2px solid transparent;
+  border-radius: 2px;
+  width: 70%;
+  background-color: transparent;
+  border-bottom: 2px solid dimgray;
+  outline: none;
+  font-size: 17px;
+}
+
+.Login button {
+  background: rgb(155,4,117);
+  background: linear-gradient(90deg, rgba(155,4,117,1) 0%, rgba(197,197,197,1) 100%, rgba(211,211,211,1) 100%);order: none;
+  border-radius: 5px;
+  padding: 15px;
+  width: 70%;
+  color: black;
+  cursor: pointer;
+  border: none;
+  outline: none;
+  font-size: 17px;
+}
+
+.Login p {
+  font-size: 15px;
+  font-weight: 500;
+  margin: 0;
+}
+
+.Login a {
+  color: #007bff;
+  text-decoration: none;
+  align-self: flex-end;
+  margin-top: 5px;
+}
+
+.loginForms {
+  margin: 20px 0;
+}
+
+.loginError {
+  color: rgb(215, 31, 31);
+  font-family: 'Open Sans';
+  font-size: 13px;
+  font-weight: 500;
+  font-style: italic;
+  margin-bottom: 10px;
+}

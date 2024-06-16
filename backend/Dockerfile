@@ -1,13 +1,25 @@
-FROM node:16
+FROM golang:1.22 AS build-stage
 
 WORKDIR /app
 
-COPY ./package*.json ./
+COPY go.mod go.sum ./
 
-RUN npm install
+RUN go mod download
 
-COPY . .
+COPY *.go ./
 
-EXPOSE 8080
+RUN CGO_ENABLED=0 GOOS=linux go build  -o /api
 
-CMD ["npm", "start"]
+FROM build-stage AS run-test-stage
+
+RUN go test -c ./...
+
+FROM scratch AS run-release-stage
+
+WORKDIR /app
+
+COPY --from=build-stage /api /api
+
+EXPOSE 8000
+
+CMD [ "/api" ]
