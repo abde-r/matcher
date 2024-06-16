@@ -42,14 +42,14 @@ func SetDB(database *sqlx.DB) {
 // }
 
 // CreateUserInput struct
-type CreateUserInput struct {
-	FirstName string `json:"first_name"`
-	LastName  string `json:"last_name"`
-	Email     string `json:"email"`
-	Username  string `json:"username"`
-	Password  string `json:"password"`
-	Gender    string `json:"gender"`
-	Token     string `json:"token"`
-}
+// type CreateUserInput struct {
+// 	FirstName string `json:"first_name"`
+// 	LastName  string `json:"last_name"`
+// 	Email     string `json:"email"`
+// 	Username  string `json:"username"`
+// 	Password  string `json:"password"`
+// 	Gender    bool `json:"gender"`
+// 	Token     string `json:"token"`
+// }
 
 // Query resolver methods

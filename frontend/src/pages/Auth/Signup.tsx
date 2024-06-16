@@ -190,19 +190,35 @@ export const Signup = ({ setAuth }: any) => {
   const _signup = async () => {
     if (validateInputs()) {
       try {
-        await axios.post(`http://localhost:8080/auth/signup`, {
-          username: inputData.username,
-          email: inputData.email,
-          password: inputData.password
-        }, { withCredentials: true })
+        const response = await fetch(`http://localhost:8000/api/v1/auth/register`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*',
+          },
+          body: JSON.stringify({
+            username: inputData.username,
+            email: inputData.email,
+            password: inputData.password,
+          }),
+          credentials: 'include' // This ensures credentials like cookies are included
+        });
+  
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+  
+        const data = await response.json();
+        console.log(data); // or handle the response data
+  
         setAuth({ token: true });
-        navigate('/')
-      }
-      catch (err) {
-        console.error(err)
+        navigate('/');
+      } catch (err) {
+        console.error('Error:', err);
       }
     }
   };
+  
 
   console.log('wewww', inputData)
 

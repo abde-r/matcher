@@ -12,16 +12,16 @@ type DB struct {
 	*sqlx.DB
 }
 
-type User struct {
-	ID        int32  `db:"id"`
-	FirstName string `db:"first_name"`
-	LastName  string `db:"last_name"`
-	Email     string `db:"email"`
-	Username  string `db:"username"`
-	Password  string `db:"password"`
-	Gender    string `db:"gender"`
-	Token     string `db:"token"`
-}
+// type User struct {
+// 	ID        int32  	`db:"id"`
+// 	FirstName string 	`db:"first_name"`
+// 	LastName  string 	`db:"last_name"`
+// 	Email     string 	`db:"email"`
+// 	Username  string 	`db:"username"`
+// 	Password  string 	`db:"password"`
+// 	Gender    bool		`db:"gender"`
+// 	Token     string 	`db:"token"`
+// }
 
 // // NewDB creates a new database connection
 // func NewDB(dataSourceName string) (*DB, error) {
