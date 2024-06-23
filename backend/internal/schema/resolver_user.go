@@ -3,6 +3,7 @@ package schema
 import (
 	"context"
 	"fmt"
+	// "time"
 
 	// "fmt"
 	// "io/ioutil"
@@ -49,8 +50,24 @@ func (r *UserResolver) Gender() bool {
 	return r.user.Gender
 }
 
+func (r *UserResolver) Birthday() string {
+	return r.user.Birthday;
+}
+
+func (r *UserResolver) Preferences() string {
+	return r.user.Preferences;
+}
+
+func (r *UserResolver) Pics() string {
+	return r.user.Pics;
+}
+
 func (r *UserResolver) Token() string {
-	return r.user.Token
+	return r.user.Token;
+}
+
+func (r *UserResolver) Location() string {
+	return r.user.Location;
 }
 
 func (r *Resolver) Users(ctx context.Context) ([]*UserResolver, error) {
@@ -75,12 +92,17 @@ func (r *Resolver) User(ctx context.Context, args struct{ ID int32 }) (*UserReso
 	return &UserResolver{user: &user}, nil
 }
 
-func (r *Resolver) CompleteRegistration(ctx context.Context, args struct{ Input CompleteRegisterationUserInput }) (*UserResolver, error) {
+func (r *Resolver) ProceedRegistrationUser(ctx context.Context, args struct{ Input store.ProceedRegistrationUserPayload }) (*UserResolver, error) {
 	
 	user := store.User{
+		ID:		args.Input.ID,
 		First_name: args.Input.First_name,
 		Last_name:  args.Input.Last_name,
+		Birthday:    args.Input.Birthday,
 		Gender:    args.Input.Gender,
+		Preferences:    args.Input.Preferences,
+		Pics: args.Input.Pics,
+		Location: args.Input.Location,
 	}
 
 	fmt.Println("hello", user)
@@ -102,8 +124,6 @@ func (r *Resolver) CompleteRegistration(ctx context.Context, args struct{ Input 
 	// if err != nil {
 	// 	return nil, err
 	// }
-
-	fmt.Println("errrree")
 
 	// Perform any additional registration completion steps here
 

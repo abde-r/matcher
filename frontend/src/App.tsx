@@ -13,6 +13,7 @@ import { ForgotPass } from './pages/Auth/ForgotPass'
 import { ProceedSignup } from './pages/Auth/ProceedSignup'
 import { PrivateRoutes } from './pages/Auth/PrivateRoutes'
 import { useState } from 'react'
+import { Waiting } from './pages/Auth/Waiting'
 
 axios.defaults.baseURL = `http://localhost:8080`
 axios.defaults.withCredentials = true
@@ -42,6 +43,7 @@ function App() {
           <Route path='/reset-pass/:token' element={<ResetPass />} />
           <Route path='/signup' element={<Signup setAuth={setAuth} />} />
           <Route path='/proceed-signup' element={<ProceedSignup />} />
+          <Route path='/account-verification' element={<Waiting />} />
         </Routes>
       {/* </AuthProvider> */}
     </div>

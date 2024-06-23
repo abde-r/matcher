@@ -1,87 +1,87 @@
-.Proceed-signup {
-  background-color: lightgray;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 95%;
-  height: 95%;
-  margin: auto;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  font-family: 'Open Sans';
-}
+// .Proceed-signup {
+//   background-color: lightgray;
+//   position: absolute;
+//   top: 50%;
+//   left: 50%;
+//   transform: translate(-50%, -50%);
+//   width: 95%;
+//   height: 95%;
+//   margin: auto;
+//   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+//   border: 1px solid #ccc;
+//   border-radius: 5px;
+//   font-family: 'Open Sans';
+// }
 
-.Proceed-signup .container {
-  display: flex;
-  flex-direction: column;
-  width: 300px;
-  margin: 30px auto;
-  padding: 20px;
-  align-items: center;
-  text-align: center;
-}
+// .Proceed-signup .container {
+//   display: flex;
+//   flex-direction: column;
+//   width: 300px;
+//   margin: 30px auto;
+//   padding: 20px;
+//   align-items: center;
+//   text-align: center;
+// }
 
-.Proceed-signup h2 {
-  border-bottom: 2px solid rgb(155,4,117);
-}
-.Proceed-signup input {
-  padding: 10px;
-  margin: 10px;
-  border: 2px solid transparent;
-  border-radius: 2px;
-  width: 70%;
-  background-color: transparent;
-  border-bottom: 2px solid dimgray;
-  outline: none;
-  font-size: 17px;
-  color: gray;
-}
+// .Proceed-signup h2 {
+//   border-bottom: 2px solid rgb(155,4,117);
+// }
+// .Proceed-signup input {
+//   padding: 10px;
+//   margin: 10px;
+//   border: 2px solid transparent;
+//   border-radius: 2px;
+//   width: 70%;
+//   background-color: transparent;
+//   border-bottom: 2px solid dimgray;
+//   outline: none;
+//   font-size: 17px;
+//   color: gray;
+// }
 
-.Proceed-signup select {
-    padding: 10px;
-    margin: 10px;
-    border: 2px solid transparent;
-    border-radius: 2px;
-    width: 80%;
-    background-color: transparent;
-    border-bottom: 2px solid dimgray;
-    outline: none;
-    font-size: 17px;
-    color: gray;
-  }
+// .Proceed-signup select {
+//     padding: 10px;
+//     margin: 10px;
+//     border: 2px solid transparent;
+//     border-radius: 2px;
+//     width: 80%;
+//     background-color: transparent;
+//     border-bottom: 2px solid dimgray;
+//     outline: none;
+//     font-size: 17px;
+//     color: gray;
+//   }
 
-.Proceed-signup button {
-  background: rgb(155,4,117);
-  background: linear-gradient(90deg, rgba(155,4,117,1) 0%, rgba(197,197,197,1) 100%, rgba(211,211,211,1) 100%);order: none;
-  border-radius: 5px;
-  padding: 15px;
-  width: 70%;
-  color: black;
-  cursor: pointer;
-  border: none;
-  outline: none;
-  font-size: 17px;
-}
+// .Proceed-signup button {
+//   background: rgb(155,4,117);
+//   background: linear-gradient(90deg, #9b0475 0%, rgba(197,197,197,1) 100%, rgba(211,211,211,1) 100%);order: none;
+//   border-radius: 5px;
+//   padding: 15px;
+//   width: 70%;
+//   color: black;
+//   cursor: pointer;
+//   border: none;
+//   outline: none;
+//   font-size: 17px;
+// }
 
-.Proceed-signup p {
-  font-size: 15px;
-  font-weight: 500;
-  margin: 0;
-}
+// .Proceed-signup p {
+//   font-size: 15px;
+//   font-weight: 500;
+//   margin: 0;
+// }
 
-.Proceed-signup a {
-  color: #007bff;
-  text-decoration: none;
-  align-self: flex-end;
-  margin-top: 5px;
-}
+// .Proceed-signup a {
+//   color: #007bff;
+//   text-decoration: none;
+//   align-self: flex-end;
+//   margin-top: 5px;
+// }
 
-.Proceed-signupForms {
-  margin: 20px 0;
-}
+// .Proceed-signupForms {
+//   margin: 20px 0;
+// }
 
-.userNames {
-    display: flex;
-}
+// .userNames {
+//     display: flex;
+// }

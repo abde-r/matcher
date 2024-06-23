@@ -20,12 +20,12 @@ func (r *Resolver) RegisterUser(ctx context.Context, args struct{ Input store.Re
 	}
     
     newUser := store.User{
-		First_name: args.Input.First_name,
-		Last_name:  args.Input.Last_name,
+		// First_name: args.Input.First_name,
+		// Last_name:  args.Input.Last_name,
 		Email:     args.Input.Email,
 		Username:  args.Input.Username,
 		Password:  hashedPassword,
-		Gender:    args.Input.Gender,
+		// Gender:    args.Input.Gender,
 	}
 
 	id, err := store.CreateUser(db, &newUser);

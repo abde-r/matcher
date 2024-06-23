@@ -1,3 +1,5 @@
+scalar Date
+
 type User {
     id: ID!
     first_name: String!
@@ -5,8 +7,12 @@ type User {
     email: String!
     username: String!
     password: String!
+    birthday: String!
     gender: Boolean!
+    preferences: String!
+    pics: String!
     token: String!
+    location: String!
 }
 
 input RegisterUserInput {
@@ -15,10 +21,15 @@ input RegisterUserInput {
     password: String!
 }
 
-input CompleteRegisterationUserInput {
+input ProceedRegisterationUserInput {
+    id: ID!
     first_name: String!
     last_name: String!
+    birthday: String!
     gender: Boolean!
+    preferences: String!
+    pics: String!
+    location: String!
 }
 
 input LoginUserInput {
@@ -36,7 +47,7 @@ type Query {
 type Mutation {
     registerUser(input: RegisterUserInput!): User
     loginUser(input: LoginUserInput!): User
-    completeRegistration(input: CompleteRegisterationUserInput!): User
+    proceedRegistrationUser(input: ProceedRegisterationUserInput!): User
 }
 
 type Post {

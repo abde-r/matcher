@@ -68,7 +68,7 @@ import validator from 'validator';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircleRight } from '@fortawesome/free-solid-svg-icons';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+// import axios from 'axios';
 import './Signup.scss'
 
 export const Signup = ({ setAuth }: any) => {
@@ -189,33 +189,48 @@ export const Signup = ({ setAuth }: any) => {
 
   const _signup = async () => {
     if (validateInputs()) {
-      try {
-        const response = await fetch(`http://localhost:8000/api/v1/auth/register`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Access-Control-Allow-Origin': '*',
-          },
-          body: JSON.stringify({
-            username: inputData.username,
-            email: inputData.email,
-            password: inputData.password,
-          }),
-          credentials: 'include' // This ensures credentials like cookies are included
-        });
+      // try {
+        const res = await fetch(`http://localhost:8000/api/v1/auth/register`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            credentials: 'include',
+            body: JSON.stringify({
+              query:`
+                mutation RegisterUser($input: RegisterUserInput!) {
+                  registerUser(input: $input) {
+                    username,
+                    email,
+                    password,
+                  }
+                }
+              `,
+              variables: {
+                input: {
+                  username: inputData.username,
+                  email: inputData.email,
+                  password: inputData.password
+                }
+              }
+            }),
+        })
+        .then(res => { return res.json(); })
+        .catch(error => { console.log('Error registring user', error); });
+
   
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
+        // if (!response.ok) {
+        //   throw new Error('Network response was not ok');
+        // }
   
-        const data = await response.json();
-        console.log(data); // or handle the response data
+        // const data = await response.json();
+        console.log('res', res.data); // or handle the response data
   
         setAuth({ token: true });
-        navigate('/');
-      } catch (err) {
-        console.error('Error:', err);
-      }
+        navigate('/account-verification');
+      // } catch (err) {
+      //   console.error('Error:', err);
+      // }
     }
   };
   
