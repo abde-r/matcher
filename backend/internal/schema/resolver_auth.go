@@ -2,9 +2,19 @@ package schema
 
 import (
 	"context"
+	"fmt"
+	// "os"
+
+	// "os"
+
+	// "fmt"
 	"log"
 	"matchaVgo/internal/auth"
 	"matchaVgo/internal/store"
+	"net/http"
+	"time"
+	// "github.com/graph-gophers/graphql-go"
+	// "github.com/99designs/gqlgen/graphql"
 )
 
 func (r *Resolver) RegisterUser(ctx context.Context, args struct{ Input store.RegisterUserPayload }) (*UserResolver, error) {
@@ -20,12 +30,12 @@ func (r *Resolver) RegisterUser(ctx context.Context, args struct{ Input store.Re
 	}
     
     newUser := store.User{
-		First_name: args.Input.First_name,
-		Last_name:  args.Input.Last_name,
+		// First_name: args.Input.First_name,
+		// Last_name:  args.Input.Last_name,
 		Email:     args.Input.Email,
 		Username:  args.Input.Username,
 		Password:  hashedPassword,
-		Gender:    args.Input.Gender,
+		// Gender:    args.Input.Gender,
 	}
 
 	id, err := store.CreateUser(db, &newUser);
@@ -34,7 +44,7 @@ func (r *Resolver) RegisterUser(ctx context.Context, args struct{ Input store.Re
 	}
 	
 	newUser.ID = id
-    newUser.Token, err = store.UpdateUserToken(db, &newUser);
+    newUser.Token, err = auth.CreateJWT(int(newUser.ID));// store.UpdateUserToken(db, &newUser);
 	if err != nil {
         log.Fatal(err);
     }
@@ -45,6 +55,22 @@ func (r *Resolver) RegisterUser(ctx context.Context, args struct{ Input store.Re
 	return &UserResolver{user: &newUser}, nil
 }
 
+type contextKey string
+
+const responseWriterKey contextKey = "responseWriter"
+
+func WithResponseWriter(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		ctx := context.WithValue(r.Context(), responseWriterKey, w)
+		next.ServeHTTP(w, r.WithContext(ctx))
+	})
+}
+
+func getResponseWriter(ctx context.Context) (http.ResponseWriter, bool) {
+	w, ok := ctx.Value(responseWriterKey).(http.ResponseWriter)
+	return w, ok
+}
+
 func (r *Resolver) LoginUser(ctx context.Context, args struct{ Input store.LoginUserPayload }) (*UserResolver, error) {
 	
 	user, err := store.LoginValidation(db, &args.Input);
@@ -52,8 +78,29 @@ func (r *Resolver) LoginUser(ctx context.Context, args struct{ Input store.Login
 		return nil, err;
 	}
 
-	// JWT or something
+	token, err := auth.CreateJWT(int(user.ID))
+	if err != nil {
+		return nil, err
+	}
 
+	// Extract the HTTP response writer from the context
+	if httpResponseWriter, ok := getResponseWriter(ctx); ok {
+		// Set the cookie
+		http.SetCookie(httpResponseWriter, &http.Cookie{
+			Name:     "matcher-token",
+			Value:    token,
+			Path:     "/",
+			Expires:  time.Now().Add(time.Minute * 3), // Cookie expires in 1 minute
+			HttpOnly: false,
+			Secure:   false, // Set to true if using HTTPS
+			SameSite: http.SameSiteStrictMode,
+		})
+		store.UpdateUserToken(db, user, token);
+	} else {
+		return nil, err;
+	}
+		
+		fmt.Println("Hola", token);
 	return &UserResolver{user: user}, nil;
 
 	// var user types.LoginUserPayload
