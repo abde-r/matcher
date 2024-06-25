@@ -26,6 +26,13 @@ export const ProceedSignup = () => {
     location: "randomLocation127.0.0.1",
   })
 
+
+  const validateAge = (birthdayString: string): number => {
+    const birthday = new Date(birthdayString)
+    const diff = Date.now() - birthday.getTime();
+    const ageDate = new Date(diff);
+    return Math.abs(ageDate.getUTCFullYear()-1970);
+  }
   const validateInputs = () => {
     const errors: any = {};
 
@@ -37,6 +44,9 @@ export const ProceedSignup = () => {
     }
     if (validator.isEmpty(inputData.birthday)) {
       errors.birthday = 'birthday is required';
+    }
+    if (validateAge(inputData.birthday) < 18) {
+      errors.birthday = 'under Age! sir awldi tl3ab';
     }
     if (!inputData.preferences.length) {
       errors.preferences = 'preferences are required';
@@ -120,23 +130,25 @@ export const ProceedSignup = () => {
     }
   }
 
+  console.log(inputData)
+
   return (
-    <div className="flex flex-col h-[96vh] bg-gray-200 items-center justify-center p-4 m-4 rounded-md">
-      <div className="flex flex-col items-center justify-center border border-[#9b0475] rounded-md p-20">
-        <h1 className="text-2xl capitalize font-semibold border-b-4 border-[#714bd2] rounded-sm text-gray-600">Proceed Signup</h1>
+    <div className="flex flex-col h-[90vh] bg-[#d3d3d3] items-center justify-center p-4 m-10 w-[75%] mx-auto rounded-md">
+      {/* <div className="flex flex-col items-center justify-center border  rounded-md p-20"> */}
+        <h1 className="text-3xl capitalize my-7 font-semibold border-b-4 border-[#714bd2] rounded-sm text-gray-500">Proceed Signup</h1>
             <div className="flex flex-col my-5 items-center justify-center">
                 <div className="flex my-5">
                   <div className="flex flex-col">
-                    <input className="mx-2 p-1 rounded-sm text-lg outline-none text-gray-500" type="text" placeholder="First Name" onChange={(e) => { setInputData({ ...inputData, firstName: e.target.value }) }} />
+                    <input className="p-2 mx-2 rounded-sm text-gray-500 bg-transparent outline-none border-b-2 border-gray-400" type="text" placeholder="First Name" onChange={(e) => { setInputData({ ...inputData, firstName: e.target.value }) }} />
                     {validationErrors.firstName && <p style={{ color: 'red', fontSize: '12px' }}>*{validationErrors.firstName}</p>}
                   </div>
                   <div className="flex flex-col">
-                    <input className="mx-2 p-1 rounded-sm text-lg outline-none text-gray-500" type="text" placeholder="Last Name" onChange={(e) => { setInputData({ ...inputData, lastName: e.target.value }) }} />
+                    <input className="p-2 mx-2 rounded-sm text-gray-500 bg-transparent outline-none border-b-2 border-gray-400" type="text" placeholder="Last Name" onChange={(e) => { setInputData({ ...inputData, lastName: e.target.value }) }} />
                     {validationErrors.lastName && <p style={{ color: 'red', fontSize: '12px' }}>*{validationErrors.lastName}</p>}
                   </div>
                 </div>
                 
-                <input className="my-2 p-1 rounded-sm text-lg outline-none text-gray-500" type="date" placeholder="Birth date" onChange={(e) => { setInputData({ ...inputData, birthday: e.target.value }) }} />
+                <input className="p-2 my-3 rounded-sm text-gray-500 bg-transparent outline-none border-b-2 border-gray-400" type="date" placeholder="Birth date" onChange={(e) => { setInputData({ ...inputData, birthday: e.target.value }) }} />
                 {validationErrors.birthday && <p style={{ color: 'red', fontSize: '12px' }}>*{validationErrors.birthday}</p>}
 
                 
@@ -155,7 +167,7 @@ export const ProceedSignup = () => {
                 </div>
 
                 <div className="flex flex-col my-2 items-center w-[100%]">
-                  <select className="my-2 p-1 rounded-sm text-lg outline-none text-gray-500" onChange={handleAddPreference}>
+                  <select className="p-2 my-3 rounded-sm text-gray-500 bg-transparent outline-none border-b-2 border-gray-400" onChange={handleAddPreference}>
                     <option hidden>Preferences</option>
                     {some_preferences.map((preference: string) => {
                       return (<option className="capitalize" value={preference}>{preference}</option>)
@@ -179,13 +191,13 @@ export const ProceedSignup = () => {
                   <label className="conditions-checkbox flex-col">
                     <p className="text-gray-500">This informations will give other users to get to know more about you.</p>
                     <input className="cursor-pointer" type="checkbox" />
-                    <span className="text-gray-500">I agree to terms of us</span>
+                    <span className="text-gray-500 underline">I agree to terms of us</span>
                   </label>                  
                 </div>
             </div>
             <a className="flex items-center bg-[#714bd2] px-3 py-2 rounded-sm text-gray-300 text-md font-semibold cursor-pointer uppercase" onClick={proceed_signup}><span className="mr-1 text-xl"><IoArrowForwardCircleOutline /></span>Submit</a>
           
-    </div>
+    {/* </div> */}
     </div>
   )
 }

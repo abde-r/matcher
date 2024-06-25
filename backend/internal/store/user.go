@@ -3,7 +3,7 @@ package store
 import (
 	"fmt"
 	"log"
-	"matchaVgo/internal/auth"
+	// "matchaVgo/internal/auth"
 	"os"
 
 	"github.com/jmoiron/sqlx"
@@ -61,15 +61,15 @@ func CreateUser(db *sqlx.DB, user *User) (int32, error) {
     return id, nil
 }
 
-func UpdateUserToken(db *sqlx.DB, user *User) (string, error) {
+func UpdateUserToken(db *sqlx.DB, user *User, token string) (string, error) {
     
-	secret := []byte(os.Getenv("JWT_SECRET_TOKEN"));
-	token, err := auth.CreateJWT(secret, int(user.ID));
-    if err != nil {
-        log.Fatal(err);
-    }
+	// secret := []byte(os.Getenv("JWT_SECRET_TOKEN"));
+	// token, err := auth.CreateJWT(int(user.ID));
+    // if err != nil {
+    //     log.Fatal(err);
+    // }
 
-	_, err = db.Exec("UPDATE users SET token = $1 WHERE id = $2", token, user.ID)
+	_, err := db.Exec("UPDATE users SET token = $1 WHERE id = $2", token, user.ID)
     if err != nil {
 		return "", err
 	}

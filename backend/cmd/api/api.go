@@ -56,6 +56,7 @@ func Ga33ad_server(db *sqlx.DB) error {
 	// Subrouter for users
 	userRouter := apiRouter.PathPrefix("/users").Subrouter()
 	userRouter.Handle("/", graphqlHandler(parsedSchema)).Methods("POST");
+	userRouter.Handle("/token", graphqlHandler(parsedSchema)).Methods("POST");
 	// userRouter.Handle("/g", graphqlHandler(parsedSchema)).Methods("GET");
 	userRouter.Handle("/proceed-registration", graphqlHandler(parsedSchema)).Methods("POST");
 
@@ -70,9 +71,11 @@ func Ga33ad_server(db *sqlx.DB) error {
         handlers.AllowCredentials(),
     )(router)
 
+	wrappedRouter := schema.WithResponseWriter(corsHandler)
+
 	// Start the server
 	log.Println("✨ Running on port", backendPort, "..");
-	return http.ListenAndServe(":"+backendPort, corsHandler);
+	return http.ListenAndServe(":"+backendPort, wrappedRouter);
 }
 
 func graphqlHandler(schema *graphql.Schema) http.Handler {

@@ -92,6 +92,15 @@ func (r *Resolver) User(ctx context.Context, args struct{ ID int32 }) (*UserReso
 	return &UserResolver{user: &user}, nil
 }
 
+func (r *Resolver) UserByToken(ctx context.Context, args struct{ Token string }) (*UserResolver, error) {
+	var user store.User
+	err := db.Get(&user, "SELECT * FROM users WHERE token=$1", args.Token)
+	if err != nil {
+		return nil, err
+	}
+	return &UserResolver{user: &user}, nil
+}
+
 func (r *Resolver) ProceedRegistrationUser(ctx context.Context, args struct{ Input store.ProceedRegistrationUserPayload }) (*UserResolver, error) {
 	
 	user := store.User{

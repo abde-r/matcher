@@ -2,7 +2,7 @@ package store
 
 import (
 	"errors"
-	"fmt"
+	// "fmt"
 	"matchaVgo/internal/auth"
 
 	"github.com/go-playground/validator"
@@ -31,7 +31,7 @@ func RegistrationValidation(db *sqlx.DB, user *RegisterUserPayload) (bool, error
 
 func ProceedRegistrationValidation(db *sqlx.DB, user *ProceedRegistrationUserPayload) (bool, error) {
 
-	fmt.Print("wew wew")
+	// fmt.Print("wew wew")
 	if err := Validate.Struct(user); err != nil {
 		return false, err;
 	}
