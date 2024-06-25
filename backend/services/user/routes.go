@@ -9,7 +9,7 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/go-playground/validator/v10"
+	"github.com/go-playground/validator"
 	"github.com/gorilla/mux"
 )
 
@@ -75,6 +75,7 @@ func (s *UserService) UserRegister(w http.ResponseWriter, r *http.Request) {
 	// Token creation
 	secret := []byte(configs.Envs.JWTSecret)
 	token, err := auth.CreateJWT(secret, int(user_id))
+	
 	// err != nil {
 	// 	utils.WriteError(w, http.StatusInternalServerError, err);
 	// 	return

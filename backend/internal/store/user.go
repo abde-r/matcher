@@ -3,7 +3,7 @@ package store
 import (
 	"fmt"
 	"log"
-	"matchaVgo/internal/auth"
+	// "matchaVgo/internal/auth"
 	"os"
 
 	"github.com/jmoiron/sqlx"
@@ -52,8 +52,8 @@ func CreateUser(db *sqlx.DB, user *User) (int32, error) {
     
 	var id int32
     err := db.QueryRow(
-        "INSERT INTO users (first_name, last_name, username, email, password, gender) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id",
-        user.First_name, user.Last_name, user.Username, user.Email, user.Password, user.Gender,
+        "INSERT INTO users (username, email, password) VALUES ($1, $2, $3) RETURNING id",
+        user.Username, user.Email, user.Password,
     ).Scan(&id)
     if err != nil {
         return -1, err
@@ -61,15 +61,15 @@ func CreateUser(db *sqlx.DB, user *User) (int32, error) {
     return id, nil
 }
 
-func UpdateUserToken(db *sqlx.DB, user *User) (string, error) {
+func UpdateUserToken(db *sqlx.DB, user *User, token string) (string, error) {
     
-	secret := []byte(os.Getenv("JWT_SECRET_TOKEN"));
-	token, err := auth.CreateJWT(secret, int(user.ID));
-    if err != nil {
-        log.Fatal(err);
-    }
+	// secret := []byte(os.Getenv("JWT_SECRET_TOKEN"));
+	// token, err := auth.CreateJWT(int(user.ID));
+    // if err != nil {
+    //     log.Fatal(err);
+    // }
 
-	_, err = db.Exec("UPDATE users SET token = $1 WHERE id = $2", token, user.ID)
+	_, err := db.Exec("UPDATE users SET token = $1 WHERE id = $2", token, user.ID)
     if err != nil {
 		return "", err
 	}
@@ -79,15 +79,14 @@ func UpdateUserToken(db *sqlx.DB, user *User) (string, error) {
 
 func UpdateUser(db *sqlx.DB, user *User) (*User, error) {
 
-	id := "17"
-	_, err := db.Exec("UPDATE users SET first_name = $1, last_name = $2, gender = $3 WHERE id = $4", user.First_name, user.Last_name, user.Gender, id/*user.ID*/)
+	_, err := db.Exec("UPDATE users SET first_name = $1, last_name = $2, birthday = $3, gender = $4, preferences = $5, pics = $6, location = $7 WHERE id = $8", user.First_name, user.Last_name, user.Birthday, user.Gender, user.Preferences, user.Pics, user.Location, user.ID)
 	if err != nil {
 		return nil, err
 	}
 
 	// Retrieve the updated user from the database
 	updatedUser := &User{}
-	err = db.Get(updatedUser, "SELECT * FROM users WHERE id = $1", id)
+	err = db.Get(updatedUser, "SELECT * FROM users WHERE id = $1", user.ID)
 	if err != nil {
 		return nil, err
 	}
@@ -105,7 +104,7 @@ func SendEmail(user_email string) {
 	mail.SetHeader("To", user_email);
 	mail.SetHeader("Subject", "MatcherX account verification");
 
-	body := fmt.Sprintf(`<div><a href="%s"><b>Clicki 3la had lb3ar!</b></a> <br> <img src="%s" alt="img" /></div>`, "https://abder.vercel.app", "https://media.makeameme.org/created/fact-no-verification.jpg");
+	body := fmt.Sprintf(`<div><a href="%s"><b>Clicki 3la had lb3ar!</b></a> <br> <img src="%s" alt="img" /></div>`, "http://localhost:5173/proceed-signup", "https://media.makeameme.org/created/fact-no-verification.jpg");
 	mail.SetBody("text/html", body);
 
 	d := gomail.NewDialer("smtp.gmail.com", 587, email, email_pass);
