@@ -2,34 +2,34 @@ scalar Date
 
 type User {
     id: ID!
-    first_name: String!
-    last_name: String!
-    email: String!
-    username: String!
-    password: String!
-    birthday: String!
-    gender: Boolean!
-    preferences: String!
-    pics: String!
-    token: String!
-    location: String!
+    first_name:     String!
+    last_name:      String!
+    email:          String!
+    username:       String!
+    password:       String!
+    birthday:       String!
+    gender:         Boolean!
+    preferences:    String!
+    pics:           String!
+    token:          String!
+    location:       String!
 }
 
 input RegisterUserInput {
-    username: String!
-    email: String!
-    password: String!
+    username:   String!
+    email:      String!
+    password:   String!
 }
 
 input ProceedRegisterationUserInput {
-    id: ID!
-    first_name: String!
-    last_name: String!
-    birthday: String!
-    gender: Boolean!
-    preferences: String!
-    pics: String!
-    location: String!
+    first_name:     String!
+    last_name:      String!
+    birthday:       String!
+    gender:         Boolean!
+    preferences:    String!
+    pics:           String!
+    location:       String!
+    token:          String!
 }
 
 input LoginUserInput {
@@ -52,8 +52,8 @@ type Mutation {
 }
 
 type Post {
-    id: ID!
-    title: String!
-    content: String!
-    user_id: ID!
+    id:         ID!
+    title:      String!
+    content:    String!
+    user_id:    ID!
 }

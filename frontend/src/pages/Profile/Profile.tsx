@@ -1,12 +1,10 @@
 import { useEffect, useState } from "react"
-// import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-// import { faCakeCandles, faCircle, faCircleDot, faCircleNotch, faGear, faHeart, faMapPin, faMars, faPerson, faPersonDress, faVenus } from "@fortawesome/free-solid-svg-icons";
-import { IoBalloonSharp, IoFemale, IoHeart, IoLocationSharp, IoMale, IoManSharp, IoSettingsSharp, IoToggleSharp, IoWoman, IoWomanSharp } from "react-icons/io5";
+import { IoBalloonSharp, IoFemale, IoHeart, IoLocationSharp, IoMale, IoManSharp, IoSettingsSharp, IoToggleSharp, IoWomanSharp } from "react-icons/io5";
 
 export const Profile = () => {
 
     const [user, setUser] = useState<any>();
-    const [cokiza, setCokiza] = useState<string>('');
+    const [cookiza, setCookiza] = useState<string>('');
     // const [inputData, setInputData] = useState({ firstName: 'f', lastName: '', username: '', gender: 1, email: '', password: '' })
     
     useEffect(() => {
@@ -36,7 +34,7 @@ export const Profile = () => {
                 }
               `,
               variables: {
-                token: cokiza,
+                token: cookiza,
               }
             })
         })
@@ -64,7 +62,7 @@ export const Profile = () => {
 
         setUser(res?.data?.userByToken);
       })()
-    }, [cokiza])
+    }, [cookiza])
     
 
     // const [userData, setUserData] = useState<any>(inputData)
@@ -78,35 +76,14 @@ export const Profile = () => {
         for (let i = 0; i < cookieArray.length; i++) {
             const cookie = cookieArray[i].trim();
             if (cookie.startsWith('matcher-token=')) {
-                setCokiza(cookie.substring('matcher-token='.length))
+                setCookiza(cookie.substring('matcher-token='.length))
                 break;
             }
         }
     }, [])
 
-    // useEffect(() => {
-    //     (async () => {
-    //       const res = await axios.post(`http://localhost:8080/api/users/me`,
-    //       {
-    //         'access_token': myCookie,
-    //       }, { withCredentials: true })
-    
-    //       console.log('res', res);
-    //       if (res.data.status) {
-    //         setMe(res.data)
-    //       }
-    //     })()
-    //   }, [])
-
-    //   console.log('mee', me)
-
-    // const handleGenderChange = (e: any) => {
-    //   const x = e.target.value === 'Male' ? 1 : 0
-    //   setInputData({ ...inputData, gender: x})
-    // }
-
     console.log("user", user)
-    console.log("cokiza", cokiza)
+    console.log("cokiza", cookiza)
 
 
     return (
