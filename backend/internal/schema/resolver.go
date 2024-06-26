@@ -10,7 +10,7 @@ import (
 type Resolver struct{}
 
 type ProceedRegisterationUserInput struct {
-	ID        	int32
+	// ID        	int32
 	First_name	string
 	Last_name	string
 	Birthday	string
@@ -18,4 +18,5 @@ type ProceedRegisterationUserInput struct {
 	Preferences	string
 	Pics		string
 	Location 	string
+	Token		string
 }

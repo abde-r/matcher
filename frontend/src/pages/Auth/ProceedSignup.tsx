@@ -1,12 +1,18 @@
-// import axios from "axios"
-import { useState } from "react"
-// import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-// import { faCalendar, faCircleRight } from "@fortawesome/free-regular-svg-icons"
-// import './ProceedSignup.scss'
+import { useEffect, useState } from "react"
 import { IoArrowForwardCircleOutline, IoCloseCircleOutline } from "react-icons/io5";
 import { useNavigate } from "react-router-dom";
 import validator from "validator";
 
+interface InputData {
+  firstName: string;
+  lastName: string;
+  username: string;
+  birthday: string;
+  gender: boolean;
+  preferences: string[];
+  pics: string[];
+  location: string;
+}
 
 const some_preferences: any = ['sport', 'books', 'party', 'travel', 'cars', 'memes', 'movies', 'anime'];
 
@@ -14,8 +20,11 @@ export const ProceedSignup = () => {
 
   const navigate = useNavigate();
   const [validationErrors, setValidationErrors] = useState<any>({});
+  const [cookiza, setCookiza] = useState<string>('');
+  const [termsAgreed, setTermsAgreed] = useState<boolean>(false);
+  // const [location, setLocation] = useState({ latitude: -1, longitude: -1 });
 
-  const [inputData, setInputData] = useState({
+  const [inputData, setInputData] = useState<InputData>({
     firstName: '',
     lastName: '',
     username: '',
@@ -23,7 +32,7 @@ export const ProceedSignup = () => {
     gender: true,
     preferences: [],
     pics: [],
-    location: "randomLocation127.0.0.1",
+    location: '',
   })
 
 
@@ -51,6 +60,9 @@ export const ProceedSignup = () => {
     if (!inputData.preferences.length) {
       errors.preferences = 'preferences are required';
     }
+    if (!inputData.location.length) {
+      errors.terms = 'Allow Terms limak!';
+    }
 
     setValidationErrors(errors);
     return Object.keys(errors).length === 0;
@@ -59,7 +71,19 @@ export const ProceedSignup = () => {
   const proceed_signup = async () => {
     
     // data validation before sending request
+    // if ('geolocation' in navigator) {
+    //   navigator.geolocation.getCurrentPosition((position) => {
+    //     setInputData({ ...inputData, location: 'latitude:'+ (position.coords.latitude).toString() +';longitude:' + (position.coords.longitude).toString() });
+    //     // setLocation();
+    //   }, (error) => {
+    //     console.error('Error getting location:', error);
+    //   });
+    // } else {
+    //   console.log('Geolocation is not available');
+    // }
+
     if (validateInputs()) {
+      console.log('wee wew', inputData)
       const res = await fetch(`http://localhost:8000/api/v1/users/proceed-registration`, {
           method: 'POST',
           headers: {
@@ -70,7 +94,6 @@ export const ProceedSignup = () => {
             query:`
               mutation ProceedRegistrationUser($input: ProceedRegisterationUserInput!) {
                 proceedRegistrationUser(input: $input) {
-                  id,
                   first_name,
                   last_name,
                   birthday,
@@ -78,19 +101,20 @@ export const ProceedSignup = () => {
                   preferences,
                   pics,
                   location
+                  token,
                 }
               }
             `,
             variables: {
               input: {
-                id: 18,
                 first_name: inputData.firstName,
                 last_name: inputData.lastName,
-                birthday: "2-2-2",//inputData.birthday,
+                birthday: inputData.birthday,
                 gender: inputData.gender,
                 preferences: (inputData.preferences).join(';'),
                 pics: (inputData.pics).join(";;;"),
-                location: inputData.location,
+                location: inputData.location, // THIS LOCATION MUST BE HANDLED LATER!!!
+                token: cookiza,
               }
             }
           }),
@@ -103,6 +127,32 @@ export const ProceedSignup = () => {
         navigate('/profile');
     }
   }
+
+  useEffect(() => {
+    const cookieArray = document.cookie.split(';');
+    console.log(cookieArray)
+
+    for (let i = 0; i < cookieArray.length; i++) {
+        const cookie = cookieArray[i].trim();
+        if (cookie.startsWith('matcher-token=')) {
+            setCookiza(cookie.substring('matcher-token='.length))
+            break;
+        }
+    }
+  }, [])
+
+  // useEffect(() => {
+  //   if ('geolocation' in navigator) {
+  //     navigator.geolocation.getCurrentPosition((position) => {
+  //       setLocation({ latitude: position.coords.latitude, longitude: position.coords.longitude });
+  //       // sendLocationToServer(position.coords.latitude, position.coords.longitude);
+  //     }, (error) => {
+  //       console.error('Error getting location:', error);
+  //     });
+  //   } else {
+  //     console.log('Geolocation is not available');
+  //   }
+  // }, []);
 
   const handleGenderChange = (e: any) => {
     const x = e.target.value === 'Male' ? true : false
@@ -130,7 +180,50 @@ export const ProceedSignup = () => {
     }
   }
 
+  // const handleLocationPermission = () => {
+  //   if (termsAgreed) {
+  //     console.log('haa', termsAgreed)
+
+  //     if ('geolocation' in navigator) {
+  //       navigator.geolocation.getCurrentPosition((position) => {
+  //         const location = `latitude:${position.coords.latitude};longitude:${position.coords.longitude}`;
+  //         setInputData({ ...inputData, location });
+  //       }, (error) => {
+  //         console.error('Error getting location:', error);
+  //         setValidationErrors({ ...validationErrors, location: 'Location access is required' });
+  //       });
+  //     } else {
+  //       console.log('Geolocation is not available');
+  //       setValidationErrors({ ...validationErrors, location: 'Geolocation is not available' });
+  //     }
+  //   }
+  // }
+
+  const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setTermsAgreed(e.target.checked);
+    console.log('wee we', e.target.checked, termsAgreed);
+    if (e.target.checked) {
+      console.log('haa', termsAgreed)
+
+      if ('geolocation' in navigator) {
+        navigator.geolocation.getCurrentPosition((position) => {
+          const location = `latitude:${position.coords.latitude};longitude:${position.coords.longitude}`;
+          setInputData({ ...inputData, location });
+        }, (error) => {
+          console.error('Error getting location:', error);
+          setValidationErrors({ ...validationErrors, location: 'Location access is required' });
+        });
+      } else {
+        console.log('Geolocation is not available');
+        setValidationErrors({ ...validationErrors, location: 'Geolocation is not available' });
+      }
+    }
+  }
+  
+
   console.log(inputData)
+  // console.log(cookiza)
+  // console.log('location', location)
 
   return (
     <div className="flex flex-col h-[90vh] bg-[#d3d3d3] items-center justify-center p-4 m-10 w-[75%] mx-auto rounded-md">
@@ -169,8 +262,8 @@ export const ProceedSignup = () => {
                 <div className="flex flex-col my-2 items-center w-[100%]">
                   <select className="p-2 my-3 rounded-sm text-gray-500 bg-transparent outline-none border-b-2 border-gray-400" onChange={handleAddPreference}>
                     <option hidden>Preferences</option>
-                    {some_preferences.map((preference: string) => {
-                      return (<option className="capitalize" value={preference}>{preference}</option>)
+                    {some_preferences.map((preference: string, index: number) => {
+                      return (<option key={index} className="capitalize" value={preference}>{preference}</option>)
                     })}
                   </select>
                   {validationErrors.preferences && <p style={{ color: 'red', fontSize: '12px' }}>*{validationErrors.preferences}</p>}
@@ -178,8 +271,8 @@ export const ProceedSignup = () => {
                     {
                       inputData.preferences.map((pr: string, index: number) => {
                         return (
-                        <div className='flex bg-blue-100 p-1'>
-                          <p key={index} className="flex items-center text-sm font-semibold text-gray-500 border border-[#714bd2] rounded-sm m-1 p-1 capitalize">{pr} <span className="ml-1 text-lg cursor-pointer" onClick={() => handleRemovePreference(pr)}><IoCloseCircleOutline /></span></p>
+                        <div key={index} className='flex bg-blue-100 p-1'>
+                          <p className="flex items-center text-sm font-semibold text-gray-500 border border-[#714bd2] rounded-sm m-1 p-1 capitalize">{pr} <span className="ml-1 text-lg cursor-pointer" onClick={() => handleRemovePreference(pr)}><IoCloseCircleOutline /></span></p>
                         </div>
                       )
                       })
@@ -190,9 +283,10 @@ export const ProceedSignup = () => {
                 <div className="check-conditions my-4">
                   <label className="conditions-checkbox flex-col">
                     <p className="text-gray-500">This informations will give other users to get to know more about you.</p>
-                    <input className="cursor-pointer" type="checkbox" />
+                    <input className="cursor-pointer" type="checkbox" checked={termsAgreed} onChange={handleCheckboxChange} />
                     <span className="text-gray-500 underline">I agree to terms of us</span>
-                  </label>                  
+                  </label>
+                  {validationErrors.terms && <p style={{ color: 'red', fontSize: '12px' }}>*{validationErrors.terms}</p>}
                 </div>
             </div>
             <a className="flex items-center bg-[#714bd2] px-3 py-2 rounded-sm text-gray-300 text-md font-semibold cursor-pointer uppercase" onClick={proceed_signup}><span className="mr-1 text-xl"><IoArrowForwardCircleOutline /></span>Submit</a>

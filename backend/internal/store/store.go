@@ -45,6 +45,7 @@ type ProceedRegistrationUserPayload struct {
 	Preferences	string  	`db:"preferences" validate:"required"`
 	Pics		string		`db:"pics" validate:"required"`
 	Location	string		`db:"location" validate:"required"`
+	Token		string		`db:"token" validate:"required"`
 }
 
 type LoginUserPayload struct {
