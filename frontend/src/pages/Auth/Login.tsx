@@ -1,12 +1,8 @@
-import axios from "axios"
 import { useState } from "react"
+import { IoArrowForwardCircleOutline } from "react-icons/io5";
 import { useNavigate } from 'react-router-dom'
 // import { useAuth } from "../../components/Auth/Auth"
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faCircleRight } from "@fortawesome/free-regular-svg-icons"
 import validator from "validator";
-import './Login.scss'
-import { BounceLoader } from "react-spinners"
 
 export const Login = ({ setAuth }: any) => {
 
@@ -37,41 +33,53 @@ export const Login = ({ setAuth }: any) => {
     setInputData({ ...inputData, [name]: value });
   };
   
+  console.log('ff ', import.meta.env.VITE_BACK_URL)
   const _login = async () => {
     if (validateInputs()) {
-      try {
-        // console.log('input data: ', inputData)
-        await axios.post(`http://localhost:8080/auth/login`, {
-          'username': inputData.username,
-          'password': inputData.password,
-        }, { withCredentials: true })
-        // console.log('res', res)
-        // auth.login(res.data.user[0])
-        setAuth({ token: true });
-        navigate('/profile', { replace: true })
-      }
-      catch (err: any) {
-        setLoginError(err.response.data.error);
-      }
+      const res = await fetch(`http://localhost:8000/api/v1/auth/login`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            credentials: 'include',
+            body: JSON.stringify({
+              query:`
+                mutation LoginUser($input: LoginUserInput!) {
+                  loginUser(input: $input) {
+                    username,
+                    password,
+                  }
+                }
+              `,
+              variables: {
+                input: {
+                  username: inputData.username,
+                  password: inputData.password,
+                }
+              }
+            })
+        })
+        .then(res => {return res.json()})
+        .catch(err => { console.log('Error in login', err); })
+
+        console.log(res.data);
+        navigate('/');
     }
   }
 
   return (
-    <div className="Login">
-      <div className="container">
-        <h2>Login</h2>
-        <p>Welcom back! Login to access the matcherX.</p>
-        <p>Did you <a href="/forgot-pass">Forgot password?</a></p>
-        <div className="loginForms">
-          <input type="text" name="username" placeholder="Username" value={inputData.username} style={validationErrors.username && { border: '1px solid rgb(215, 31, 31)', borderRadius: '10px'}} onChange={handleInputChange} />
-          {validationErrors.username && <span className="loginError">*{ validationErrors.username }</span>}
-          <input type="password" name="password" placeholder="Password" value={inputData.password} style={validationErrors.password && { border: '1px solid rgb(215, 31, 31)', borderRadius: '10px'}} onChange={handleInputChange} />
-          {validationErrors.password && <span className="loginError">*{ validationErrors.password }</span>}
-        </div>
-        { loginError && <span className="loginError">* { loginError }</span> }
-        <button onClick={_login}><FontAwesomeIcon icon={faCircleRight} /> Continue</button>
-        {/* <BounceLoader color="#d636c8" speedMultiplier={1.8} /> */}
+    <div className="flex flex-col bg-[#d3d3d3] items-center justify-center m-10 h-[90vh] w-[75%] mx-auto rounded-lg">
+      <h1 className="text-3xl capitalize my-7 font-semibold border-b-4 border-[#714bd2] rounded-sm text-gray-500">Login</h1>
+      <p className="text-gray-500">Welcom back! Login to access the matcherX.</p>
+      <p className="text-gray-500">Did you <a className="text-[#007bff]" href="/forgot-pass">Forgot password?</a></p>
+      <div className="flex flex-col items-center">
+        <input  className='p-2 my-3 rounded-sm text-gray-500 bg-transparent outline-none border-b-2 border-gray-400' type="text" name="username" placeholder="username" value={inputData.username} onChange={handleInputChange} />
+        {validationErrors.username && <span className="loginError">*{ validationErrors.username }</span>}
+        <input  className='p-2 my-3 rounded-sm text-gray-500 bg-transparent outline-none border-b-2 border-gray-400' type="password" name="password" placeholder="password" value={inputData.password} onChange={handleInputChange} />
+        {validationErrors.password && <span className="loginError">*{ validationErrors.password }</span>}
       </div>
+      { loginError && <span className="loginError">* { loginError }</span> }
+      <a className="flex items-center bg-[#714bd2] px-3 py-2 rounded-sm text-gray-300 text-md font-semibold cursor-pointer uppercase" onClick={_login}><IoArrowForwardCircleOutline className="mr-1 text-xl" />Login</a>
     </div>
   )
 }

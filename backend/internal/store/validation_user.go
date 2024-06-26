@@ -3,6 +3,8 @@ package store
 import (
 	"errors"
 	"matchaVgo/internal/auth"
+	// "fmt"
+	// "matchaVgo/internal/auth"
 
 	"github.com/go-playground/validator"
 	"github.com/jmoiron/sqlx"
@@ -28,18 +30,17 @@ func RegistrationValidation(db *sqlx.DB, user *RegisterUserPayload) (bool, error
 
 }
 
-func CompleteRegistrationValidation(db *sqlx.DB, user *CompleteRegistrationUserPayload) (bool, error) {
+func ProceedRegistrationValidation(db *sqlx.DB, user *ProceedRegistrationUserPayload) (bool, error) {
 
+	// fmt.Print("wew wew")
 	if err := Validate.Struct(user); err != nil {
 		return false, err;
 	}
 
 	if GetUserByUsername(db, user.Username) != -1 {
-		return false, errors.New("user already exists");
-	}
-
-	if GetUserByEmail(db, user.Email) != -1 {
-		return false, errors.New("user already exists");
+		if GetUserByEmail(db, user.Email) != -1 {
+			return false, errors.New("user not found");
+		}
 	}
 
 	return true, nil;

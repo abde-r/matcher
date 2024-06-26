@@ -1,98 +1,18 @@
-// import axios from "axios"
-// import { useState } from "react"
-// import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-// import { faCircleRight } from "@fortawesome/free-regular-svg-icons"
-// import validator from 'validator';
-
-
-// export const Signup = () => {
-
-//   const [inputData, setInputData] = useState({ username: '', email: '', password: '', confirmpassword: '' })
-//   // const [validationError, setValidationError] = useState<any>([]);
-//   const [invalidEmail, setInvalidEmail] = useState<string>('');
-//   const [invalidUsername, setInvalidUsername] = useState<string>('');
-//   const [invalidPassword, setInvalidPassword] = useState<string>('');
-//   const _signup = async () => {
-//     // try {
-//       console.log('input data: ', inputData)
-//       const { username, email, password, confirmpassword} = inputData;
-//       if (!username.toString().trim().length)
-//         setInvalidUsername('username is required!');
-//       if (!validator.isEmail(email))
-//         setInvalidEmail('invalid email form!');
-//       if ()
-//         // console.log('waaa hamid!')
-
-//       // // check data first
-//     //   const res = await axios.post(`http://localhost:8080/auth/signup`, {
-//     //     first_name: inputData.firstName,
-//     //     last_name: inputData.lastName,
-//     //     username: inputData.username,
-//     //     gender: inputData.gender,
-//     //     email: inputData.email,
-//     //     password: inputData.password
-//     //   }, { withCredentials: true })
-//     //   console.log('res', res.data)
-//     // }
-//     // catch (err) {
-//     //   console.error('errrror: ', err)
-//     // }
-//   }
-
-//   // const handleGenderChange = (e: any) => {
-//   //   const x = e.target.value === 'Male' ? 1 : 0
-//   //   setInputData({ ...inputData, gender: x})
-//   // }
-//   console.log(validationError)
-
-//   return (
-//     <div className="Signup">
-//       <div className="container">
-//         <h2>Signup</h2>
-//         <p>Welcom to matcherX! Pleas enter your infos to get access.</p>
-//         <p>You have an <a className="goLogin" href="/login">account?</a></p>
-//         <div className="SignupForms">
-//           <input type="email" placeholder="email" onChange={(e) => { setInputData({ ...inputData, email: e.target.value }) }} />
-//           <input type="text" placeholder="username" onChange={(e) => { setInputData({ ...inputData, username: e.target.value }) }} />
-//           <input type="password" placeholder="password" onChange={(e) => { setInputData({ ...inputData, password: e.target.value }) }} />
-//           <input type="password" placeholder="confirm password" style={validationError.confirmPassword && { border: '2px solid red'}} onChange={(e) => { setInputData({ ...inputData, password: e.target.value }) }} />
-//         </div>
-//         <a className="proceed" /*href='/proceed-signup'*/ onClick={_signup}><FontAwesomeIcon icon={faCircleRight} /> Proceed</a>
-//       </div>
-//     </div>
-//   )
-// }
-
 import { useState } from 'react';
 import validator from 'validator';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCircleRight } from '@fortawesome/free-solid-svg-icons';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
 import './Signup.scss'
+import { IoArrowForwardCircleOutline } from 'react-icons/io5';
 
 export const Signup = ({ setAuth }: any) => {
 
   const [inputData, setInputData] = useState<any>({
-    // firstName: '',
-    // lastName: '',
     username: '',
-    // gender: 1,
     email: '',
-    // preferences: [],
-    // interests: [],
-    // currentInterest: '',
     password: '',
     confirmPassword: ''
   })
-  // const [proceed, setProceed] = useState<boolean>(false);
-
-  // const [inputData, setInputData] = useState({
-  //   email: '',
-  //   username: '',
-  //   password: '',
-  //   confirmPassword: ''
-  // });
+  
   const navigate = useNavigate()
 
   const [validationErrors, setValidationErrors] = useState<any>({});
@@ -109,7 +29,7 @@ export const Signup = ({ setAuth }: any) => {
       errors.email = 'Invalid email format';
     }
 
-    if (inputData.email === 'gg') {
+    if (inputData.email === 'gg') { // TO MOVE THIS PART OF VERIFICATION TO THE BACKEND!!!
       errors.username = 'Email Already in use';
     }
 
@@ -117,7 +37,7 @@ export const Signup = ({ setAuth }: any) => {
       errors.username = 'Username is required';
     }
 
-    if (inputData.username === 'gg') {
+    if (inputData.username === 'gg') { // TO MOVE THIS PART OF VERIFICATION TO THE BACKEND!!!
       errors.username = 'Username Already in use';
     }
 
@@ -140,107 +60,61 @@ export const Signup = ({ setAuth }: any) => {
     return Object.keys(errors).length === 0;
   };
 
-  // const handleGenderChange = (e: any) => {
-  //   const x = e.target.value === 'Male' ? 1 : 0
-  //   setInputData({ ...inputData, gender: x})
-  // }
-
-  // const handleSelectChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-  //   const selectedValue = event.target.value;
-  //   if (!inputData.preferences.includes(selectedValue)) {
-  //     setInputData((prevState: any) => ({
-  //       ...prevState,
-  //       preferences: [...prevState.preferences, selectedValue]
-  //     }));
-  //   }
-  // };
-
-  // const handleInterestsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-  //   setInputData((prevState: any) => ({
-  //     ...prevState,
-  //     currentInterest: e.target.value
-  //   }));
-  // };
-
-  // const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-  //   if (e.key === 'Enter') {
-  //     const newInterest = inputData.currentInterest.trim();
-  //     if (newInterest) {
-  //       setInputData((prevState: any) => ({
-  //         ...prevState,
-  //         interests: [...prevState.interests, newInterest],
-  //         currentInterest: ''
-  //       }));
-  //     }
-  //   }
-  // };
-
-  // const handleKeyDown = (e) => {
-  //   if (e.key === 'Enter') {
-  //     const newInterests = [...inputData.interests, inputData.password];
-  //     setInputData({ ...inputData, interests: newInterests, password: '' });
-  //   }
-  // };
-  
-  // const _proceed = () => {
-  //   if (validateInputs())
-  //     setProceed(true);
-  // }
-
   const _signup = async () => {
     if (validateInputs()) {
-      try {
-        const response = await fetch(`http://localhost:8000/api/v1/auth/register`, {
+      const res = await fetch(`http://localhost:8000/api/v1/auth/register`, {
           method: 'POST',
           headers: {
-            'Content-Type': 'application/json',
-            'Access-Control-Allow-Origin': '*',
+              'Content-Type': 'application/json',
           },
+          credentials: 'include',
           body: JSON.stringify({
-            username: inputData.username,
-            email: inputData.email,
-            password: inputData.password,
+            query:`
+              mutation RegisterUser($input: RegisterUserInput!) {
+                registerUser(input: $input) {
+                  username,
+                  email,
+                  password,
+                }
+              }
+            `,
+            variables: {
+              input: {
+                username: inputData.username,
+                email: inputData.email,
+                password: inputData.password,
+              }
+            }
           }),
-          credentials: 'include' // This ensures credentials like cookies are included
-        });
-  
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-  
-        const data = await response.json();
-        console.log(data); // or handle the response data
-  
-        setAuth({ token: true });
-        navigate('/');
-      } catch (err) {
-        console.error('Error:', err);
-      }
+      })
+      .then(res => { return res.json(); })
+      .catch(error => { console.log('Error registring user', error); });
+      console.log('res', res.data); // or handle the response data
+
+      setAuth({ token: true });
+      navigate('/account-verification');
     }
   };
-  
-
-  console.log('wewww', inputData)
 
   return (
-    <div className="Signup">
-      <div className="container">
-            <h2>Signup</h2>
-            <p>Welcome to matcherX! Please enter your informations to get access.</p>
-            <p>You have an <a className="goLogin" href="/login">account?</a></p>
-            <div className="SignupForms">
-              <input type="email" name="email" placeholder="Email" value={inputData.email} style={validationErrors.email && { border: '2px solid red', borderRadius: '10px'}} onChange={handleInputChange} />
+    <div className="flex flex-col bg-[#d3d3d3] items-center justify-center m-10 h-[90vh] w-[75%] mx-auto rounded-lg">
+      {/* <div className="container"> */}
+            <h1 className="text-3xl capitalize my-7 font-semibold border-b-4 border-[#714bd2] rounded-sm text-gray-500">Signup</h1>
+            <p className="text-gray-500">Welcome to matcherX! Please enter your informations to get access.</p>
+            <p className="text-gray-500">You have an <a className="text-[#007bff] font-semibold" href="/login">account?</a></p>
+            <div className="flex flex-col items-center">
+              <input className='p-2 my-3 rounded-sm text-gray-500 bg-transparent outline-none border-b-2 border-gray-400' type="email" name="email" placeholder="Email" value={inputData.email} style={validationErrors.email && { border: '2px solid red', borderRadius: '10px'}} onChange={handleInputChange} />
               {validationErrors.email && <p style={{ color: 'red', fontSize: '12px' }}>*{validationErrors.email}</p>}
-              <input type="text" name="username" placeholder="Username" value={inputData.username} style={validationErrors.username && { border: '2px solid red', borderRadius: '10px'}} onChange={handleInputChange} />
+              <input className='p-2 my-3 rounded-sm text-gray-500 bg-transparent outline-none border-b-2 border-gray-400' type="text" name="username" placeholder="Username" value={inputData.username} style={validationErrors.username && { border: '2px solid red', borderRadius: '10px'}} onChange={handleInputChange} />
               {validationErrors.username && <p style={{ color: 'red', fontSize: '12px' }}>*{validationErrors.username}</p>}
-              <input type="password" name="password" placeholder="Password" value={inputData.password} style={validationErrors.password && { border: '2px solid red', borderRadius: '10px'}} onChange={handleInputChange} />
+              <input className='p-2 my-3 rounded-sm text-gray-500 bg-transparent outline-none border-b-2 border-gray-400' type="password" name="password" placeholder="Password" value={inputData.password} style={validationErrors.password && { border: '2px solid red', borderRadius: '10px'}} onChange={handleInputChange} />
               {validationErrors.password && <p style={{ color: 'red', fontSize: '12px' }}>*{validationErrors.password}</p>}
-              <input type="password" name="confirmPassword" placeholder="Confirm Password" value={inputData.confirmPassword} style={validationErrors.confirmPassword && { border: '2px solid red', borderRadius: '10px'}} onChange={handleInputChange} />
+              <input className='p-2 my-3 rounded-sm text-gray-500 bg-transparent outline-none border-b-2 border-gray-400' type="password" name="confirmPassword" placeholder="Confirm Password" value={inputData.confirmPassword} style={validationErrors.confirmPassword && { border: '2px solid red', borderRadius: '10px'}} onChange={handleInputChange} />
               {validationErrors.confirmPassword && <p style={{ color: 'red', fontSize: '12px' }}>*{validationErrors.confirmPassword}</p>}
             </div>
-            <a className="proceed" onClick={_signup}><FontAwesomeIcon className='submit-circle' icon={faCircleRight} />Signup</a>
+            <a className="flex items-center bg-[#714bd2] px-3 my-3 py-2 rounded-sm text-gray-300 text-md font-semibold cursor-pointer uppercase" onClick={_signup}><IoArrowForwardCircleOutline className="mr-1 text-xl" />Signup</a>
             {/* <a className="proceed" onClick={_signup}><FontAwesomeIcon icon={faCircleRight} /> Proceed</a> */}
-      </div>
+      {/* </div> */}
     </div>
   );
 };

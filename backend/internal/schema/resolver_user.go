@@ -2,18 +2,13 @@ package schema
 
 import (
 	"context"
-	"fmt"
-
-	// "fmt"
-	// "io/ioutil"
-	// "matchaVgo/internal/schema"
+	
 	"matchaVgo/internal/store"
-	// "net/http"
 	"strconv"
-	// "strings"
 
 	"github.com/graph-gophers/graphql-go"
 )
+
 
 // UserResolver struct
 type UserResolver struct {
@@ -49,8 +44,24 @@ func (r *UserResolver) Gender() bool {
 	return r.user.Gender
 }
 
+func (r *UserResolver) Birthday() string {
+	return r.user.Birthday;
+}
+
+func (r *UserResolver) Preferences() string {
+	return r.user.Preferences;
+}
+
+func (r *UserResolver) Pics() string {
+	return r.user.Pics;
+}
+
 func (r *UserResolver) Token() string {
-	return r.user.Token
+	return r.user.Token;
+}
+
+func (r *UserResolver) Location() string {
+	return r.user.Location;
 }
 
 func (r *Resolver) Users(ctx context.Context) ([]*UserResolver, error) {
@@ -75,37 +86,32 @@ func (r *Resolver) User(ctx context.Context, args struct{ ID int32 }) (*UserReso
 	return &UserResolver{user: &user}, nil
 }
 
-func (r *Resolver) CompleteRegistration(ctx context.Context, args struct{ Input CompleteRegisterationUserInput }) (*UserResolver, error) {
+func (r *Resolver) UserByToken(ctx context.Context, args struct{ Token string }) (*UserResolver, error) {
+	var user store.User
+	err := db.Get(&user, "SELECT * FROM users WHERE token=$1", args.Token)
+	if err != nil {
+		return nil, err
+	}
+	return &UserResolver{user: &user}, nil
+}
+
+func (r *Resolver) ProceedRegistrationUser(ctx context.Context, args struct{ Input store.ProceedRegistrationUserPayload }) (*UserResolver, error) {
 	
 	user := store.User{
 		First_name: args.Input.First_name,
 		Last_name:  args.Input.Last_name,
+		Birthday:    args.Input.Birthday,
 		Gender:    args.Input.Gender,
+		Preferences:    args.Input.Preferences,
+		Pics: args.Input.Pics,
+		Location: args.Input.Location,
+		Token: args.Input.Token,
 	}
 
-	fmt.Println("hello", user)
-	_user, err := store.UpdateUser(db, &user);	
+	_user, err := store.UpdateUserByToken(db, &user);	
 	if err != nil {
 		return nil, err
 	}
-	// id, err := strconv.Atoi(string(args.ID))
-	// if err != nil {
-	// 	return nil, err
-	// }
-
-	// user, err := store.GetUserById(db, int64(id));
-	// if err != nil {
-	// 	return nil, err
-	// }
-	
-	// _user, err := store.GetUserById(db, 17);
-	// if err != nil {
-	// 	return nil, err
-	// }
-
-	fmt.Println("errrree")
-
-	// Perform any additional registration completion steps here
 
 	return &UserResolver{user: _user}, nil
 }

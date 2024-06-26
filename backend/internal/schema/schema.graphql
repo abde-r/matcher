@@ -1,24 +1,35 @@
+scalar Date
+
 type User {
     id: ID!
-    first_name: String!
-    last_name: String!
-    email: String!
-    username: String!
-    password: String!
-    gender: Boolean!
-    token: String!
+    first_name:     String!
+    last_name:      String!
+    email:          String!
+    username:       String!
+    password:       String!
+    birthday:       String!
+    gender:         Boolean!
+    preferences:    String!
+    pics:           String!
+    token:          String!
+    location:       String!
 }
 
 input RegisterUserInput {
-    username: String!
-    email: String!
-    password: String!
+    username:   String!
+    email:      String!
+    password:   String!
 }
 
-input CompleteRegisterationUserInput {
-    first_name: String!
-    last_name: String!
-    gender: Boolean!
+input ProceedRegisterationUserInput {
+    first_name:     String!
+    last_name:      String!
+    birthday:       String!
+    gender:         Boolean!
+    preferences:    String!
+    pics:           String!
+    location:       String!
+    token:          String!
 }
 
 input LoginUserInput {
@@ -29,6 +40,7 @@ input LoginUserInput {
 type Query {
     users: [User!]!
     user(id: ID!): User
+    userByToken(token: String!): User
     posts: [Post!]!
     post(id: ID!): Post
 }
@@ -36,12 +48,12 @@ type Query {
 type Mutation {
     registerUser(input: RegisterUserInput!): User
     loginUser(input: LoginUserInput!): User
-    completeRegistration(input: CompleteRegisterationUserInput!): User
+    proceedRegistrationUser(input: ProceedRegisterationUserInput!): User
 }
 
 type Post {
-    id: ID!
-    title: String!
-    content: String!
-    user_id: ID!
+    id:         ID!
+    title:      String!
+    content:    String!
+    user_id:    ID!
 }
