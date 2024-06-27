@@ -22,7 +22,7 @@ func RegistrationValidation(db *sqlx.DB, user *RegisterUserPayload) (bool, error
 		return false, errors.New("user already exists");
 	}
 
-	if GetUserByEmail(db, user.Email) != -1 {
+	if GetUserIDByEmail(db, user.Email) != -1 {
 		return false, errors.New("user already exists");
 	}
 
@@ -38,7 +38,7 @@ func ProceedRegistrationValidation(db *sqlx.DB, user *ProceedRegistrationUserPay
 	}
 
 	if GetUserByUsername(db, user.Username) != -1 {
-		if GetUserByEmail(db, user.Email) != -1 {
+		if GetUserIDByEmail(db, user.Email) != -1 {
 			return false, errors.New("user not found");
 		}
 	}

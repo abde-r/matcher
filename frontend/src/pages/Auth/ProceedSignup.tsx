@@ -233,16 +233,16 @@ export const ProceedSignup = () => {
                 <div className="flex my-5">
                   <div className="flex flex-col">
                     <input className="p-2 mx-2 rounded-sm text-gray-500 bg-transparent outline-none border-b-2 border-gray-400" type="text" placeholder="First Name" onChange={(e) => { setInputData({ ...inputData, firstName: e.target.value }) }} />
-                    {validationErrors.firstName && <p style={{ color: 'red', fontSize: '12px' }}>*{validationErrors.firstName}</p>}
+                    {validationErrors.firstName && <p className="text-red-500 font-semibold text-sm">*{validationErrors.firstName}</p>}
                   </div>
                   <div className="flex flex-col">
                     <input className="p-2 mx-2 rounded-sm text-gray-500 bg-transparent outline-none border-b-2 border-gray-400" type="text" placeholder="Last Name" onChange={(e) => { setInputData({ ...inputData, lastName: e.target.value }) }} />
-                    {validationErrors.lastName && <p style={{ color: 'red', fontSize: '12px' }}>*{validationErrors.lastName}</p>}
+                    {validationErrors.lastName && <p className="text-red-500 font-semibold text-sm">*{validationErrors.lastName}</p>}
                   </div>
                 </div>
                 
                 <input className="p-2 my-3 rounded-sm text-gray-500 bg-transparent outline-none border-b-2 border-gray-400" type="date" placeholder="Birth date" onChange={(e) => { setInputData({ ...inputData, birthday: e.target.value }) }} />
-                {validationErrors.birthday && <p style={{ color: 'red', fontSize: '12px' }}>*{validationErrors.birthday}</p>}
+                {validationErrors.birthday && <p className="text-red-500 font-semibold text-sm">*{validationErrors.birthday}</p>}
 
                 
                 <div className='flex my-2'>
@@ -266,7 +266,7 @@ export const ProceedSignup = () => {
                       return (<option key={index} className="capitalize" value={preference}>{preference}</option>)
                     })}
                   </select>
-                  {validationErrors.preferences && <p style={{ color: 'red', fontSize: '12px' }}>*{validationErrors.preferences}</p>}
+                  {validationErrors.preferences && <p className="text-red-500 font-semibold text-sm">*{validationErrors.preferences}</p>}
                   <div className="flex flex-wrap mx-5 rounded-sm w-[80%] items-center justify-center">
                     {
                       inputData.preferences.map((pr: string, index: number) => {
@@ -286,7 +286,7 @@ export const ProceedSignup = () => {
                     <input className="cursor-pointer" type="checkbox" checked={termsAgreed} onChange={handleCheckboxChange} />
                     <span className="text-gray-500 underline">I agree to terms of us</span>
                   </label>
-                  {validationErrors.terms && <p style={{ color: 'red', fontSize: '12px' }}>*{validationErrors.terms}</p>}
+                  {validationErrors.terms && <p className="text-red-500 font-semibold text-sm">*{validationErrors.terms}</p>}
                 </div>
             </div>
             <a className="flex items-center bg-[#714bd2] px-3 py-2 rounded-sm text-gray-300 text-md font-semibold cursor-pointer uppercase" onClick={proceed_signup}><span className="mr-1 text-xl"><IoArrowForwardCircleOutline /></span>Submit</a>

@@ -2,6 +2,7 @@ package schema
 
 import (
 	"context"
+	"errors"
 	"log"
 	"matchaVgo/internal/auth"
 	"matchaVgo/internal/store"
@@ -60,3 +61,32 @@ func (r *Resolver) LoginUser(ctx context.Context, args struct{ Input store.Login
 
 	return &UserResolver{user: user}, nil;
 }
+
+func (r *Resolver) SendEmailVerification(ctx context.Context, args struct{ Input store.SendEmailVerificationPayload }) (*UserResolver, error) {
+	
+
+	user, err := store.GetUserByEmail(db, args.Input.Email);
+	if err != nil {
+		return nil, errors.New("invalid email");
+	}
+
+    _, err = store.SendEmailPass(args.Input.Email);
+	if err != nil {
+        log.Fatal(err);
+		return nil, err;
+    }
+
+	return &UserResolver{user: user}, nil;
+}
+
+func (r *Resolver) ResetUserPassword(ctx context.Context, args struct{ Input store.ResetUserPassPayload }) (*UserResolver, error) {
+	
+	user, err := store.UpdateUserPassword(db, &args.Input);
+	if err != nil {
+        log.Fatal(err);
+		return nil, err;
+    }
+
+	// return "1", nil;
+	return &UserResolver{user: user}, nil;
+} 

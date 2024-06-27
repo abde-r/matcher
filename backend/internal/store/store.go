@@ -53,6 +53,15 @@ type LoginUserPayload struct {
 	Password	string	`json:"password" validate:"required"`
 }
 
+type SendEmailVerificationPayload struct {
+	Email		string  	`json:"email" validate:"required,email"`
+}
+
+type ResetUserPassPayload struct {
+	Password	string	`json:"password" validate:"required"`
+	Token		string  `json:"token" validate:"required"`
+}
+
 func GetDB() *sqlx.DB {
 	if db != nil {
 		log.Fatalln("Database connection is not initialized");

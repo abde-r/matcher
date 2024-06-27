@@ -37,6 +37,15 @@ input LoginUserInput {
     password: String!
 }
 
+input SendEmailVerificationInput {
+    email: String!
+}
+
+input ResetUserPassInput {
+    password: String!
+    token: String!
+}
+
 type Query {
     users: [User!]!
     user(id: ID!): User
@@ -49,6 +58,8 @@ type Mutation {
     registerUser(input: RegisterUserInput!): User
     loginUser(input: LoginUserInput!): User
     proceedRegistrationUser(input: ProceedRegisterationUserInput!): User
+    sendEmailVerification(input: SendEmailVerificationInput!): User
+    resetUserPassword(input: ResetUserPassInput!): User
 }
 
 type Post {
