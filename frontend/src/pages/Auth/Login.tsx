@@ -33,6 +33,7 @@ export const Login = ({ setAuth }: any) => {
     setInputData({ ...inputData, [name]: value });
   };
   
+  console.log('ff ', import.meta.env.VITE_BACK_URL)
   const _login = async () => {
     if (validateInputs()) {
       const res = await fetch(`http://localhost:8000/api/v1/auth/login`, {

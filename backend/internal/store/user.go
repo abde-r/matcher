@@ -84,9 +84,24 @@ func UpdateUser(db *sqlx.DB, user *User) (*User, error) {
 		return nil, err
 	}
 
-	// Retrieve the updated user from the database
 	updatedUser := &User{}
 	err = db.Get(updatedUser, "SELECT * FROM users WHERE id = $1", user.ID)
+	if err != nil {
+		return nil, err
+	}
+
+	return updatedUser, nil
+}
+
+func UpdateUserByToken(db *sqlx.DB, user *User) (*User, error) {
+
+	_, err := db.Exec("UPDATE users SET first_name = $1, last_name = $2, birthday = $3, gender = $4, preferences = $5, pics = $6, location = $7 WHERE token = $8", user.First_name, user.Last_name, user.Birthday, user.Gender, user.Preferences, user.Pics, user.Location, user.Token)
+	if err != nil {
+		return nil, err
+	}
+
+	updatedUser := &User{}
+	err = db.Get(updatedUser, "SELECT * FROM users WHERE token = $1", user.Token)
 	if err != nil {
 		return nil, err
 	}
@@ -98,13 +113,14 @@ func SendEmail(user_email string) {
 
 	email := "matcherx1337@gmail.com";
 	email_pass := os.Getenv("EMAIL_PASS");
+	back_url := os.Getenv("BACK_URL");
 	
 	mail := gomail.NewMessage();
 	mail.SetHeader("From", email);
 	mail.SetHeader("To", user_email);
 	mail.SetHeader("Subject", "MatcherX account verification");
 
-	body := fmt.Sprintf(`<div><a href="%s"><b>Clicki 3la had lb3ar!</b></a> <br> <img src="%s" alt="img" /></div>`, "http://localhost:5173/proceed-signup", "https://media.makeameme.org/created/fact-no-verification.jpg");
+	body := fmt.Sprintf(`<div><a href="%s"><b>Clicki 3la had lb3ar!</b></a> <br> <img src="%s" alt="img" /></div>`, back_url+"/proceed-signup", "https://media.makeameme.org/created/fact-no-verification.jpg");
 	mail.SetBody("text/html", body);
 
 	d := gomail.NewDialer("smtp.gmail.com", 587, email, email_pass);

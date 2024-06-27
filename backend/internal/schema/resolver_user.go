@@ -2,19 +2,13 @@ package schema
 
 import (
 	"context"
-	"fmt"
-	// "time"
-
-	// "fmt"
-	// "io/ioutil"
-	// "matchaVgo/internal/schema"
+	
 	"matchaVgo/internal/store"
-	// "net/http"
 	"strconv"
-	// "strings"
 
 	"github.com/graph-gophers/graphql-go"
 )
+
 
 // UserResolver struct
 type UserResolver struct {
@@ -112,29 +106,13 @@ func (r *Resolver) ProceedRegistrationUser(ctx context.Context, args struct{ Inp
 		Preferences:    args.Input.Preferences,
 		Pics: args.Input.Pics,
 		Location: args.Input.Location,
+		Token: args.Input.Token,
 	}
 
-	fmt.Println("hello", user)
-	_user, err := store.UpdateUser(db, &user);	
+	_user, err := store.UpdateUserByToken(db, &user);	
 	if err != nil {
 		return nil, err
 	}
-	// id, err := strconv.Atoi(string(args.ID))
-	// if err != nil {
-	// 	return nil, err
-	// }
-
-	// user, err := store.GetUserById(db, int64(id));
-	// if err != nil {
-	// 	return nil, err
-	// }
-	
-	// _user, err := store.GetUserById(db, 17);
-	// if err != nil {
-	// 	return nil, err
-	// }
-
-	// Perform any additional registration completion steps here
 
 	return &UserResolver{user: _user}, nil
 }
