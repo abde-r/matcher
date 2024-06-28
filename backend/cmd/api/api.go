@@ -56,8 +56,8 @@ func Ga33ad_server() error {
 	userRouter := apiRouter.PathPrefix("/users").Subrouter()
 	userRouter.Handle("/", graphqlHandler(parsedSchema)).Methods("POST");
 	userRouter.Handle("/token", graphqlHandler(parsedSchema)).Methods("POST");
-	// userRouter.Handle("/g", graphqlHandler(parsedSchema)).Methods("GET");
 	userRouter.Handle("/proceed-registration", graphqlHandler(parsedSchema)).Methods("POST");
+	userRouter.Handle("/update-info", graphqlHandler(parsedSchema)).Methods("POST");
 
 	// Subrouter for posts
 	postRouter := apiRouter.PathPrefix("/posts").Subrouter();

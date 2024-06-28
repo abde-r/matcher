@@ -48,6 +48,19 @@ type ProceedRegistrationUserPayload struct {
 	Token		string		`db:"token" validate:"required"`
 }
 
+type UpdateUserInfoPayload struct {
+    ID        	int32  		`db:"id"`
+	Username	string  	`db:"username"`
+	Email		string  	`db:"email"`
+	First_name	string  	`db:"first_name" validate:"required"`
+	Last_name	string  	`db:"last_name" validate:"required"`
+	Birthday	string  	`db:"birthday" validate:"required"`
+	Preferences	string  	`db:"preferences" validate:"required"`
+	Pics		string		`db:"pics" validate:"required"`
+	Location	string		`db:"location" validate:"required"`
+	Token		string		`db:"token" validate:"required"`
+}
+
 type LoginUserPayload struct {
 	Username	string	`json:"username" validate:"required"`
 	Password	string	`json:"password" validate:"required"`

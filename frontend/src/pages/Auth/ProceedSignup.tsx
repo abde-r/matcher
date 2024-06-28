@@ -22,7 +22,32 @@ export const ProceedSignup = () => {
   const [validationErrors, setValidationErrors] = useState<any>({});
   const [cookiza, setCookiza] = useState<string>('');
   const [termsAgreed, setTermsAgreed] = useState<boolean>(false);
-  // const [location, setLocation] = useState({ latitude: -1, longitude: -1 });
+  // const [location, setLocation] = useState<any>();
+
+  useEffect(() => {
+    const getUserLocation = async () => {
+        try {
+          const ipinfo_token = 'fc231f903a127e';
+          let location: string = '';
+          const response = await fetch(`https://ipinfo.io?token=${ipinfo_token}`);
+          if (!response.ok) {
+            setInputData({ ...inputData, location: location });
+            throw new Error('Failed to fetch location');
+          }
+          else {
+            const data: any = await response.json();
+            location = data.city+'/'+data.country;
+            console.log(location, data)
+            console.log(location)
+            setInputData({ ...inputData, location: location });
+          }
+        } catch (err) {
+          console.log(err)
+        }
+    }
+
+    getUserLocation();
+  }, [])
 
   const [inputData, setInputData] = useState<InputData>({
     firstName: '',
@@ -60,9 +85,9 @@ export const ProceedSignup = () => {
     if (!inputData.preferences.length) {
       errors.preferences = 'preferences are required';
     }
-    if (!inputData.location.length) {
-      errors.terms = 'Allow Terms limak!';
-    }
+    // if (!inputData.location.length) {
+    //   errors.terms = 'Allow Terms limak!';
+    // }
 
     setValidationErrors(errors);
     return Object.keys(errors).length === 0;
@@ -82,7 +107,9 @@ export const ProceedSignup = () => {
     //   console.log('Geolocation is not available');
     // }
 
+    // getUserLocation();
     if (validateInputs()) {
+
       console.log('wee wew', inputData)
       const res = await fetch(`http://localhost:8000/api/v1/users/proceed-registration`, {
           method: 'POST',
@@ -100,7 +127,7 @@ export const ProceedSignup = () => {
                   gender,
                   preferences,
                   pics,
-                  location
+                  location,
                   token,
                 }
               }
@@ -201,36 +228,34 @@ export const ProceedSignup = () => {
 
   const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setTermsAgreed(e.target.checked);
-    console.log('wee we', e.target.checked, termsAgreed);
-    if (e.target.checked) {
-      console.log('haa', termsAgreed)
+    // console.log('wee we', e.target.checked, termsAgreed);
+    // if (e.target.checked) {
+    //   console.log('haa', termsAgreed)
 
-      if ('geolocation' in navigator) {
-        navigator.geolocation.getCurrentPosition((position) => {
-          const location = `latitude:${position.coords.latitude};longitude:${position.coords.longitude}`;
-          setInputData({ ...inputData, location });
-        }, (error) => {
-          console.error('Error getting location:', error);
-          setValidationErrors({ ...validationErrors, location: 'Location access is required' });
-        });
-      } else {
-        console.log('Geolocation is not available');
-        setValidationErrors({ ...validationErrors, location: 'Geolocation is not available' });
-      }
-    }
+    //   if ('geolocation' in navigator) {
+    //     navigator.geolocation.getCurrentPosition((position) => {
+    //       const location = `latitude:${position.coords.latitude};longitude:${position.coords.longitude}`;
+    //       setInputData({ ...inputData, location });
+    //     }, (error) => {
+    //       console.error('Error getting location:', error);
+    //       setValidationErrors({ ...validationErrors, location: 'Location access is required' });
+    //     });
+    //   } else {
+    //     console.log('Geolocation is not available');
+    //     setValidationErrors({ ...validationErrors, location: 'Geolocation is not available' });
+    //   }
+    // }
   }
   
 
-  console.log(inputData)
   // console.log(cookiza)
   // console.log('location', location)
 
   return (
     <div className="flex flex-col h-[90vh] bg-[#d3d3d3] items-center justify-center p-4 m-10 w-[75%] mx-auto rounded-md">
-      {/* <div className="flex flex-col items-center justify-center border  rounded-md p-20"> */}
-        <h1 className="text-3xl capitalize my-7 font-semibold border-b-4 border-[#714bd2] rounded-sm text-gray-500">Proceed Signup</h1>
-            <div className="flex flex-col my-5 items-center justify-center">
-                <div className="flex my-5">
+      <h1 className="text-3xl capitalize my-7 font-semibold border-b-4 border-[#714bd2] rounded-sm text-gray-500">Proceed Signup</h1>
+      <div className="flex flex-col my-5 items-center justify-center">
+        <div className="flex my-5">
                   <div className="flex flex-col">
                     <input className="p-2 mx-2 rounded-sm text-gray-500 bg-transparent outline-none border-b-2 border-gray-400" type="text" placeholder="First Name" onChange={(e) => { setInputData({ ...inputData, firstName: e.target.value }) }} />
                     {validationErrors.firstName && <p className="text-red-500 font-semibold text-sm">*{validationErrors.firstName}</p>}
