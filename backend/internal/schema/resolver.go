@@ -19,3 +19,4 @@ type ProceedRegisterationUserInput struct {
 	Pics		string
 	Location 	string
 	Token		string
+}

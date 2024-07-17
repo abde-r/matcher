@@ -97,7 +97,6 @@ func (r *Resolver) UserByToken(ctx context.Context, args struct{ Token string })
 func (r *Resolver) ProceedRegistrationUser(ctx context.Context, args struct{ Input store.ProceedRegistrationUserPayload }) (*UserResolver, error) {
 	
 	user := store.User{
-		ID:		args.Input.ID,
 		First_name: args.Input.First_name,
 		Last_name:  args.Input.Last_name,
 		Birthday:    args.Input.Birthday,

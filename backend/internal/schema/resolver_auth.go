@@ -6,10 +6,6 @@ import (
 	"log"
 	"matchaVgo/internal/auth"
 	"matchaVgo/internal/store"
-	"net/http"
-	"time"
-	// "github.com/graph-gophers/graphql-go"
-	// "github.com/99designs/gqlgen/graphql"
 )
 
 func (r *Resolver) RegisterUser(ctx context.Context, args struct{ Input store.RegisterUserPayload }) (*UserResolver, error) {
@@ -63,24 +59,6 @@ func (r *Resolver) LoginUser(ctx context.Context, args struct{ Input store.Login
 
 	store.UpdateUserToken(db, user, token);
 
-	// Extract the HTTP response writer from the context
-	if httpResponseWriter, ok := getResponseWriter(ctx); ok {
-		// Set the cookie
-		http.SetCookie(httpResponseWriter, &http.Cookie{
-			Name:     "matcher-token",
-			Value:    token,
-			Path:     "/",
-			Expires:  time.Now().Add(time.Minute * 3), // Cookie expires in 1 minute
-			HttpOnly: false,
-			Secure:   false, // Set to true if using HTTPS
-			SameSite: http.SameSiteStrictMode,
-		})
-		store.UpdateUserToken(db, user, token);
-	} else {
-		return nil, err;
-	}
-		
-		fmt.Println("Hola", token);
 	return &UserResolver{user: user}, nil;
 }
 
