@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react"
 import { IoBalloonSharp, IoFemale, IoHeart, IoLocationSharp, IoMale, IoManSharp, IoSettingsSharp, IoToggleSharp, IoWomanSharp } from "react-icons/io5";
+import { ProfileSettings } from "./ProfileSettings";
 
 export const Profile = () => {
 
@@ -82,6 +83,15 @@ export const Profile = () => {
         }
     }, [])
 
+    const [showProfileSettings, setShowProfileSettings] = useState<boolean>(false);
+    const openProfileSettings = () => {
+        setShowProfileSettings(true);
+    }
+
+    const closeProfileSettings = () => {
+        setShowProfileSettings(false);
+    }
+
     console.log("user", user)
     console.log("cokiza", cookiza)
 
@@ -100,7 +110,7 @@ export const Profile = () => {
                 </div>
                 <div className="w-[20%] flex items-center justify-center">
                     <span className="text-pink-400 text-2xl cursor-pointer hover:text-pink-500">
-                        { 1 ? <IoSettingsSharp /> : <IoHeart /> }
+                        { 1 ? <span onClick={openProfileSettings}><IoSettingsSharp className="text-[#343434]" /></span> : <IoHeart /> }
                     </span>
                 </div>
             </div>
@@ -136,6 +146,8 @@ export const Profile = () => {
                     </div>
                 </div>
             </div>
+
+            <ProfileSettings show={showProfileSettings} onClose={closeProfileSettings} />
         </div>
     )
 }

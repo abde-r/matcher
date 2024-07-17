@@ -32,9 +32,28 @@ input ProceedRegisterationUserInput {
     token:          String!
 }
 
+input UpdateUserInfoInput {
+    first_name:     String!
+    last_name:      String!
+    birthday:       String!
+    preferences:    String!
+    pics:           String!
+    location:       String!
+    token:          String!
+}
+
 input LoginUserInput {
     username: String!
     password: String!
+}
+
+input SendEmailVerificationInput {
+    email: String!
+}
+
+input ResetUserPassInput {
+    password: String!
+    token: String!
 }
 
 type Query {
@@ -46,9 +65,17 @@ type Query {
 }
 
 type Mutation {
+
+    # auth
     registerUser(input: RegisterUserInput!): User
     loginUser(input: LoginUserInput!): User
+    sendEmailVerification(input: SendEmailVerificationInput!): User
+    resetUserPassword(input: ResetUserPassInput!): User
+    resetUserPassword(input: ResetUserPassInput!): User
+
+    # user
     proceedRegistrationUser(input: ProceedRegisterationUserInput!): User
+    updateUserInfo(input: UpdateUserInfoInput!): User
 }
 
 type Post {
