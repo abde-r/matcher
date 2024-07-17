@@ -40,7 +40,7 @@ function App() {
           {/* <Route path='/' element={<Home />} /> */}
           <Route path='/login' element={<Login setAuth={setAuth} />} />
           <Route path='/forgot-pass' element={ <ForgotPass /> } />
-          <Route path='/reset-pass/:token' element={<ResetPass />} />
+          <Route path='/reset-pass' element={<ResetPass />} />
           <Route path='/signup' element={<Signup setAuth={setAuth} />} />
           <Route path='/proceed-signup' element={<ProceedSignup />} />
           <Route path='/account-verification' element={<Waiting />} />

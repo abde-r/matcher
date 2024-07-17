@@ -2,13 +2,12 @@ package schema
 
 import (
 	"context"
-	
+
 	"matchaVgo/internal/store"
 	"strconv"
 
 	"github.com/graph-gophers/graphql-go"
 )
-
 
 // UserResolver struct
 type UserResolver struct {
@@ -102,6 +101,26 @@ func (r *Resolver) ProceedRegistrationUser(ctx context.Context, args struct{ Inp
 		Last_name:  args.Input.Last_name,
 		Birthday:    args.Input.Birthday,
 		Gender:    args.Input.Gender,
+		Preferences:    args.Input.Preferences,
+		Pics: args.Input.Pics,
+		Location: args.Input.Location,
+		Token: args.Input.Token,
+	}
+
+	_user, err := store.UpdateUserByToken(db, &user);	
+	if err != nil {
+		return nil, err
+	}
+
+	return &UserResolver{user: _user}, nil
+}
+
+func (r *Resolver) UpdateUserInfo(ctx context.Context, args struct{ Input store.UpdateUserInfoPayload }) (*UserResolver, error) {
+	
+	user := store.User{
+		First_name: args.Input.First_name,
+		Last_name:  args.Input.Last_name,
+		Birthday:    args.Input.Birthday,
 		Preferences:    args.Input.Preferences,
 		Pics: args.Input.Pics,
 		Location: args.Input.Location,

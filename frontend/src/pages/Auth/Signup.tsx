@@ -6,16 +6,16 @@ import { IoArrowForwardCircleOutline } from 'react-icons/io5';
 
 export const Signup = ({ setAuth }: any) => {
 
+  const navigate = useNavigate();
   const [inputData, setInputData] = useState<any>({
     username: '',
     email: '',
     password: '',
     confirmPassword: ''
-  })
-  
-  const navigate = useNavigate()
-
+  });
   const [validationErrors, setValidationErrors] = useState<any>({});
+  
+
 
   const handleInputChange = (e: any) => {
     const { name, value } = e.target;
@@ -29,16 +29,8 @@ export const Signup = ({ setAuth }: any) => {
       errors.email = 'Invalid email format';
     }
 
-    if (inputData.email === 'gg') { // TO MOVE THIS PART OF VERIFICATION TO THE BACKEND!!!
-      errors.username = 'Email Already in use';
-    }
-
     if (validator.isEmpty(inputData.username)) {
       errors.username = 'Username is required';
-    }
-
-    if (inputData.username === 'gg') { // TO MOVE THIS PART OF VERIFICATION TO THE BACKEND!!!
-      errors.username = 'Username Already in use';
     }
 
     if (validator.isEmpty(inputData.password)) {
@@ -104,13 +96,13 @@ export const Signup = ({ setAuth }: any) => {
             <p className="text-gray-500">You have an <a className="text-[#007bff] font-semibold" href="/login">account?</a></p>
             <div className="flex flex-col items-center">
               <input className='p-2 my-3 rounded-sm text-gray-500 bg-transparent outline-none border-b-2 border-gray-400' type="email" name="email" placeholder="Email" value={inputData.email} style={validationErrors.email && { border: '2px solid red', borderRadius: '10px'}} onChange={handleInputChange} />
-              {validationErrors.email && <p style={{ color: 'red', fontSize: '12px' }}>*{validationErrors.email}</p>}
+              {validationErrors.email && <p className="text-red-500 font-semibold text-sm">*{validationErrors.email}</p>}
               <input className='p-2 my-3 rounded-sm text-gray-500 bg-transparent outline-none border-b-2 border-gray-400' type="text" name="username" placeholder="Username" value={inputData.username} style={validationErrors.username && { border: '2px solid red', borderRadius: '10px'}} onChange={handleInputChange} />
-              {validationErrors.username && <p style={{ color: 'red', fontSize: '12px' }}>*{validationErrors.username}</p>}
+              {validationErrors.username && <p className="text-red-500 font-semibold text-sm">*{validationErrors.username}</p>}
               <input className='p-2 my-3 rounded-sm text-gray-500 bg-transparent outline-none border-b-2 border-gray-400' type="password" name="password" placeholder="Password" value={inputData.password} style={validationErrors.password && { border: '2px solid red', borderRadius: '10px'}} onChange={handleInputChange} />
-              {validationErrors.password && <p style={{ color: 'red', fontSize: '12px' }}>*{validationErrors.password}</p>}
+              {validationErrors.password && <p className="text-red-500 font-semibold text-sm">*{validationErrors.password}</p>}
               <input className='p-2 my-3 rounded-sm text-gray-500 bg-transparent outline-none border-b-2 border-gray-400' type="password" name="confirmPassword" placeholder="Confirm Password" value={inputData.confirmPassword} style={validationErrors.confirmPassword && { border: '2px solid red', borderRadius: '10px'}} onChange={handleInputChange} />
-              {validationErrors.confirmPassword && <p style={{ color: 'red', fontSize: '12px' }}>*{validationErrors.confirmPassword}</p>}
+              {validationErrors.confirmPassword && <p className="text-red-500 font-semibold text-sm">*{validationErrors.confirmPassword}</p>}
             </div>
             <a className="flex items-center bg-[#714bd2] px-3 my-3 py-2 rounded-sm text-gray-300 text-md font-semibold cursor-pointer uppercase" onClick={_signup}><IoArrowForwardCircleOutline className="mr-1 text-xl" />Signup</a>
             {/* <a className="proceed" onClick={_signup}><FontAwesomeIcon icon={faCircleRight} /> Proceed</a> */}
