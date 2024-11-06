@@ -1,25 +1,42 @@
-FROM golang:1.22 AS build-stage
+# Stage 1: Build the Go binary
+FROM golang:1.22.1-alpine AS build
 
+# Set environment variables
+ENV CGO_ENABLED=0 GOOS=linux GOARCH=amd64
+
+# Set the working directory inside the container
 WORKDIR /app
 
+# Copy go.mod and go.sum files
 COPY go.mod go.sum ./
 
+# Download dependencies
 RUN go mod download
 
-COPY *.go ./
+# Copy the source code into the container
+COPY . .
 
-RUN CGO_ENABLED=0 GOOS=linux go build  -o /api
+# Copy the .env file to the container
+COPY .env .env
 
-FROM build-stage AS run-test-stage
+# Build the Go application using the Makefile
+RUN apk add --no-cache make
+RUN make build
 
-RUN go test -c ./...
+# Stage 2: Create a smaller image with the built binary
+FROM alpine:latest
 
-FROM scratch AS run-release-stage
-
+# Set working directory
 WORKDIR /app
 
-COPY --from=build-stage /api /api
+# Copy the binary from the build stage
+COPY --from=build /app/bin/matcherx ./bin/matcherx
 
-EXPOSE 8000
+# Copy the .env file into the final container
+COPY .env .env
 
-CMD [ "/api" ]
+# Expose the port on which the backend will run (adjust if necessary)
+EXPOSE 8080
+
+# Load the environment variables from .env file and run the binary
+CMD ["sh", "-c", "./bin/matcherx"]
