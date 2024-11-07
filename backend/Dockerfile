@@ -29,6 +29,8 @@ FROM alpine:latest
 # Set working directory
 WORKDIR /app
 
+COPY . .
+
 # Copy the binary from the build stage
 COPY --from=build /app/bin/matcherx ./bin/matcherx
 

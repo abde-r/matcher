@@ -1,5 +1,10 @@
 version: '3.8'
 
+networks:
+  matcha:
+    driver: bridge
+    name: matcha
+
 services:
   postgres:
     image: postgres:13
@@ -9,27 +14,25 @@ services:
       POSTGRES_PASSWORD: passnadi
       POSTGRES_DB: postgres
     ports:
-      - 5432:5432
-    volumes:
-      - ./database:/var/lib/postgresql/data
+      - "5432:5432"
     networks:
       - matcha
+    volumes:
+      - ./database:/var/lib/postgresql/data
+    expose:
+      - 5432
 
   api:
     build:
       context: backend
       dockerfile: Dockerfile
     container_name: api
+    networks:
+      - matcha
     env_file:
       - backend/.env
     depends_on:
       - postgres
     ports:
       - "8000:8000"
-    networks:
-      - matcha
-
-networks:
-  matcha:
-    name: matcha
-    driver: bridge
+#    restart: always
