@@ -35,4 +35,4 @@ services:
       - postgres
     ports:
       - "8000:8000"
-#    restart: always
+    restart: always
