@@ -1,5 +1,9 @@
+import { AuthCardComponent } from "@/components/Auth/auth-card";
+
 export default function Auth() {
     return (
-        <div>auth page</div>
+        <div>
+            <AuthCardComponent />
+        </div>
     );
 }
