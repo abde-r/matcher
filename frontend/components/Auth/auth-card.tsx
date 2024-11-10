@@ -31,7 +31,7 @@ export function AuthCardComponent() {
     <div className="flex justify-center items-center min-h-screen bg-gradient-to-r from-gray-800 to-gray-900">
       <div className="relative">
         <a href="/home" className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex items-center space-x-3 rtl:space-x-reverse">
-          <img src="/logo.png" className="h-8" alt="Flowbite Logo" />
+          <img src="/logo.png" className="h-8" alt="MatcherX logo" />
         </a>
         <motion.div
           drag="x"

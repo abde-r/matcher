@@ -5,6 +5,7 @@ import { Card } from '@/components/ui/card';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { CalendarIcon } from '@heroicons/react/outline';
+import Image from 'next/image';
 
 const formatDate = (date: Date | null): string => {
     if (!date)
@@ -72,10 +73,17 @@ export default function CompleteProfile() {
   }
 
   return (
-    <div className="block p-4 sm:p-6 lg:p-8">
+    <div className="p-4 sm:p-6 lg:p-8 space-y-4">
+      <a className="flex items-center justify-center">
+        <Image 
+          src="/logo.png"
+          width={32}
+          height={32}
+          className="h-8"
+          alt="MatcherX logo" />
+      </a>
       <Card className="max-w-lg mx-auto p-6 w-full sm:w-80 lg:w-96">
         <h2 className="text-2xl font-bold mb-6">Complete Your Profile</h2>
-
         <div className="mb-4">
           <label className="block text-gray-700 mb-1">First Name</label>
           <input
@@ -123,7 +131,7 @@ export default function CompleteProfile() {
             className="w-full p-2 border rounded"
             placeholder="Type interest and press Enter"
           />
-          <div className="mt-2 flex flex-wrap gap-2">
+          <div className="mt-2 flex flex-wrap gap-2 max-h-16 overflow-y-auto">
             {interests.map((interest, index) => (
               <span
                 key={index}
