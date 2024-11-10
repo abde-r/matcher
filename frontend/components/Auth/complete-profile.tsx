@@ -7,26 +7,26 @@ import 'react-datepicker/dist/react-datepicker.css';
 import { CalendarIcon } from '@heroicons/react/outline';
 
 const formatDate = (date: Date | null): string => {
-    if (!date || isNaN(date.getTime()))
+    if (!date)
         return '';
-    const day = String(date.getDate()).padStart(2, '0');
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const year = date.getFullYear();
+    const newDate = new Date(date);
+    const day = String(newDate.getDate()).padStart(2, '0');
+    const month = String(newDate.getMonth() + 1).padStart(2, '0');
+    const year = newDate.getFullYear();
     return `${month}/${day}/${year}`;
 };
 
-const CustomInput = React.forwardRef(({ value, onClick, onChange }: {value: Date | null, onClick?: any, onChange: any}, ref: any) => (
+const CustomInput = React.forwardRef(({ onClick, onChange }: {onClick?: any, onChange: any}, ref: any) => (
   <div className="relative w-full">
     <input
+      multiple
       type='date'
-      value={formatDate(value)}
       onClick={onClick}
       onChange={onChange}
       ref={ref}
       className="w-full p-2 border rounded"
       placeholder="Select your birthday"
     />
-    <CalendarIcon className="absolute right-3 top-1/2 transform -translate-y-1/2 w-6 h-6 text-gray-400 pointer-events-none" />
   </div>
 ));
 
@@ -34,7 +34,7 @@ export default function CompleteProfile() {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [birthday, setBirthday] = useState<Date | null>(null);
-  const [preferences, setPreferences] = useState<string[]>([]);
+  const [preferences, setPreferences] = useState<string>('men');
   const [interests, setInterests] = useState<string[]>([]);
 
   const handleAddInterest = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -44,9 +44,12 @@ export default function CompleteProfile() {
     }
   };
 
-  const handleDateChange = (date: Date | null) => {
-    console.log("date on change", date);
-    setBirthday(date);
+  const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const inputValue = e.target.value;
+    const date = new Date(inputValue);
+    if (!isNaN(date.getTime())) {
+        setBirthday(date);
+      }
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -59,6 +62,13 @@ export default function CompleteProfile() {
 
   const handleSaveProfile = () => {
     // use the api to save the profile infos
+    console.log({
+      firstName,
+      lastName,
+      birthday: formatDate(birthday),
+      preferences,
+      interests,
+    });
   }
 
   return (
@@ -88,26 +98,20 @@ export default function CompleteProfile() {
 
         <div className="mb-4 relative">
             <label className="block text-gray-700 mb-1">Birthday</label>
-            <DatePicker
-                selected={birthday}
-                onChange={handleDateChange}
-                customInput={<CustomInput value={birthday} onChange={handleInputChange} />}
-            />
+            <CustomInput onChange={handleInputChange} onClick={handleDateChange} />
         </div>
 
         <div className="mb-4">
           <label className="block text-gray-700 mb-1">Preferences</label>
           <select
-            multiple
             value={preferences}
             onChange={(e) =>
-              setPreferences(Array.from(e.target.selectedOptions, option => option.value))
+              setPreferences(e.target.value)
             }
             className="w-full p-2 border rounded"
           >
-            <option value="preference1">Preference 1</option>
-            <option value="preference2">Preference 2</option>
-            <option value="preference3">Preference 3</option>
+            <option value="men">Men</option>
+            <option value="women">Women</option>
           </select>
         </div>
 
