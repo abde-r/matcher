@@ -37,7 +37,7 @@ services:
       FLYWAY_USER: ${FLYWAY_USER}
       FLYWAY_PASSWORD: ${FLYWAY_USER}
     volumes:
-      - ./migrations:/flyway/sql  # Mount the migrations directory
+      - ./migrations:/flyway/sql # Mount the migrations directory
     depends_on:
       - postgres
   # api:
