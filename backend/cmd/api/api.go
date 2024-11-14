@@ -8,7 +8,7 @@ import (
 	"matchaVgo/internal/schema"
 	"matchaVgo/middleware"
 	"net/http"
-	// "os"
+	"os"
 
 	"github.com/gorilla/mux"
 	"github.com/graph-gophers/graphql-go"
@@ -31,7 +31,7 @@ func graphqlHandler(schema *graphql.Schema) http.Handler {
 }
 
 func Ga33ad_server() error {
-
+	
 	db := db.Connect();
 
 	// Read and parse the schema
@@ -67,7 +67,7 @@ func Ga33ad_server() error {
 	wrappedRouter := auth.WithResponseWriter(corsHandler);
 
 	// Start the server
-	backendPort := "8080";//os.Getenv("BACKEND_PORT");
+	backendPort := os.Getenv("BACKEND_PORT");
 	log.Println("✨ Running on port", backendPort, "..");
-	return http.ListenAndServe(":"+"8080", wrappedRouter);
+	return http.ListenAndServe(":"+backendPort, wrappedRouter);
 }

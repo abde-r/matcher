@@ -1,56 +1,62 @@
 # version: '3.8'
 
-networks:
-  matcha:
-    driver: bridge
-    name: matcha
+# networks:
+#   matcha:
+#     driver: bridge
+#     name: matcha
 
 services:
-  postgres:
+  db:
     image: postgres:13
-    container_name: postgres
+    container_name: postgres_db
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: ${POSTGRES_DB}
     ports:
-      - "5432:5432"
+      - "5433:5432"
     volumes:
       - ./database:/var/lib/postgresql/data
     expose:
       - 5432
+    restart: always
   
   pgadmin:
     image: dpage/pgadmin4:latest
+    container_name: pgadmin
     environment:
       PGADMIN_DEFAULT_EMAIL: ${PGADMIN_EMAIL}
       PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASSWORD}
     ports:
       - "8080:80"
     depends_on:
-      - postgres
+      - db
+    restart: always
 
   flyway:
     image: flyway/flyway:latest
+    container_name: flyway
     environment:
-      FLYWAY_URL: jdbc:postgresql://postgres:5432/${POSTGRES_DB}
-      FLYWAY_USER: ${FLYWAY_USER}
-      FLYWAY_PASSWORD: ${FLYWAY_USER}
+      FLYWAY_URL: jdbc:postgresql://db:5432/${POSTGRES_DB}
+      FLYWAY_USER: ${POSTGRES_USER}
+      FLYWAY_PASSWORD: ${POSTGRES_PASSWORD}
     volumes:
-      - ./migrations:/flyway/sql # Mount the migrations directory
+      - ./flyway/migrations:/flyway/sql
+    command: -baselineOnMigrate=true migrate  # Automatically migrate on start
     depends_on:
-      - postgres
-  # api:
-  #   build:
-  #     context: backend
-  #     dockerfile: Dockerfile
-  #   container_name: api
-  #   networks:
-  #     - matcha
-  #   env_file:
-  #     - backend/.env
-  #   depends_on:
-  #     - postgres
-  #   ports:
-  #     - "8000:8000"
-  #   restart: always
+      - db
+    restart: "no"
+
+  backend:
+    build:
+      context: backend
+      dockerfile: Dockerfile
+    container_name: backend
+    environment:
+      - DATABASE_URL=postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
+    ports:
+      - "8000:8000"
+    command: ["./matcherx"]
+    depends_on:
+      - db
+    restart: always
