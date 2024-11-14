@@ -14,6 +14,11 @@ type UserResolver struct {
 	user *store.User
 }
 
+// ErrorResponse
+type ErrorResponse struct {
+    Message string `json:"message"`
+}
+
 // Field resolvers for User
 func (r *UserResolver) ID() graphql.ID {
 	return graphql.ID(strconv.Itoa(int(r.user.ID)))

@@ -4,11 +4,15 @@ WORKDIR /app
 COPY . .
 # Download dependencies
 RUN go mod download
+RUN go mod tidy
+RUN go install github.com/swaggo/swag/cmd/swag@latest
+RUN go get -u github.com/swaggo/gin-swagger
+RUN go get -u github.com/swaggo/files
+RUN swag init -g main.go -d ./cmd
 RUN apk add --no-cache make
 RUN make build
 
 FROM alpine:latest
-
 # Copy only the binary from the build stage
 COPY --from=build /app/bin/matcherx ./matcherx
 COPY . .

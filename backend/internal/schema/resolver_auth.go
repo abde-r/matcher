@@ -8,6 +8,17 @@ import (
 	"matchaVgo/internal/store"
 )
 
+// RegisterUser godoc
+// @Summary      Registers a new user
+// @Description  Validates input, hashes password, stores user data, and sends a welcome email
+// @Tags         User
+// @Accept       json
+// @Produce      json
+// @Param        input  body      store.RegisterUserPayload  true  "User registration payload"
+// @Success      200    {object}  UserResolver
+// @Failure      400    {object}  httputil.HTTPError
+// @Failure      500    {object}  httputil.HTTPError
+// @Router       api/v1/auth/register [post]
 func (r *Resolver) RegisterUser(ctx context.Context, args struct{ Input store.RegisterUserPayload }) (*UserResolver, error) {
 
 	is_valid, err := store.RegistrationValidation(db, &args.Input);

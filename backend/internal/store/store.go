@@ -27,6 +27,7 @@ type User struct {
 	Token		string		`db:"token"`
 }
 
+// RegisterUserPayload represents the payload for user registration
 type RegisterUserPayload struct {
 	Username	string  	`json:"username" validate:"required"`
 	Email		string  	`json:"email" validate:"required,email"`

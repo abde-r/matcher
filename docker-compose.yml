@@ -42,10 +42,10 @@ services:
       FLYWAY_PASSWORD: ${POSTGRES_PASSWORD}
     volumes:
       - ./flyway/migrations:/flyway/sql
-    command: -baselineOnMigrate=true migrate  # Automatically migrate on start
+    command: -baselineOnMigrate=true -baselineVersion=1 migrate  # Run migrations automatically
     depends_on:
       - db
-    restart: "no"
+    restart: always
 
   backend:
     build:

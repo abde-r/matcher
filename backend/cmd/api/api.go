@@ -9,6 +9,8 @@ import (
 	"matchaVgo/middleware"
 	"net/http"
 	"os"
+	"github.com/swaggo/http-swagger"
+	_ "matchaVgo/cmd/docs"
 
 	"github.com/gorilla/mux"
 	"github.com/graph-gophers/graphql-go"
@@ -44,6 +46,9 @@ func Ga33ad_server() error {
 
 	// Parent route
 	apiRouter := router.PathPrefix("/api/v1").Subrouter();
+
+	// Subrouter for swagger
+	apiRouter.PathPrefix("/swagger/").Handler(httpSwagger.WrapHandler);
 
 	// Subrouter for auth
 	authRouter := apiRouter.PathPrefix("/auth").Subrouter()

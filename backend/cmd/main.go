@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 	"matchaVgo/cmd/api"
+	_ "matchaVgo/cmd/docs"
 )
 
 func main() {
