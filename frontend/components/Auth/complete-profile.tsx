@@ -2,9 +2,7 @@
 
 import React, { useState } from 'react';
 import { Card } from '@/components/ui/card';
-import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-import { CalendarIcon } from '@heroicons/react/outline';
 import Image from 'next/image';
 
 const formatDate = (date: Date | null): string => {
