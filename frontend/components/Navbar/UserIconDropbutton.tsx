@@ -12,7 +12,7 @@ export default function UserDropdown() {
     // Detect window size to adjust dropdown responsiveness
     useEffect(() => {
       const handleResize = () => {
-        setIsSmallScreen(window.innerWidth < 640);
+        setIsSmallScreen(window.innerWidth < 1540);
       };
   
       window.addEventListener('resize', handleResize);
