@@ -1,38 +1,64 @@
-version: '3.8'
+# version: '3.8'
 
-networks:
-  matcha:
-    driver: bridge
-    name: matcha
+# networks:
+#   matcha:
+#     driver: bridge
+#     name: matcha
 
 services:
-  postgres:
+  db:
     image: postgres:13
-    container_name: postgres
+    container_name: postgres_db
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: passnadi
-      POSTGRES_DB: postgres
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
     ports:
-      - "5432:5432"
-    networks:
-      - matcha
+      - "5433:5432"
     volumes:
       - ./database:/var/lib/postgresql/data
     expose:
       - 5432
+    restart: always
+  
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_EMAIL}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASSWORD}
+    ports:
+      - "8080:80"
+    depends_on:
+      - db
+    restart: always
 
-  api:
+  flyway:
+    image: flyway/flyway:latest
+    container_name: flyway
+    environment:
+      FLYWAY_URL: jdbc:postgresql://db:5432/${POSTGRES_DB}
+      FLYWAY_USER: ${POSTGRES_USER}
+      FLYWAY_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - ./flyway/migrations:/flyway/sql
+    command: -baselineOnMigrate=true -baselineVersion=1 migrate  # Run migrations automatically
+    depends_on:
+      - db
+    restart: always
+
+  backend:
     build:
       context: backend
       dockerfile: Dockerfile
-    container_name: api
-    networks:
-      - matcha
-    env_file:
-      - backend/.env
-    depends_on:
-      - postgres
+    container_name: backend
+    volumes:
+      - .env:/.env
+    environment:
+      - DATABASE_URL=postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
     ports:
       - "8000:8000"
-#    restart: always
+    command: ["./matcherx"]
+    depends_on:
+      - db
+    restart: always
