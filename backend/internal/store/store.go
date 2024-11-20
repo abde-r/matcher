@@ -29,9 +29,9 @@ type User struct {
 
 // RegisterUserPayload represents the payload for user registration
 type RegisterUserPayload struct {
-	Username	string  	`json:"username" validate:"required"`
-	Email		string  	`json:"email" validate:"required,email"`
-	Password	string  	`json:"password" validate:"required,min=6,max=20"`
+	Username	string  	`json:"username" validate:"required" example:"ms3oud"`
+	Email		string  	`json:"email" validate:"required,email" example:"ms3oud@example.test"`
+	Password	string  	`json:"password" validate:"required,min=6,max=20" example:"securePASSWORD123"`
 	Token		string  	`json:"token"`
 }
 
@@ -63,12 +63,12 @@ type UpdateUserInfoPayload struct {
 }
 
 type LoginUserPayload struct {
-	Username	string	`json:"username" validate:"required"`
-	Password	string	`json:"password" validate:"required"`
+	Username	string	`json:"username" validate:"required" example:"ms3oud"`
+	Password	string	`json:"password" validate:"required" example:"securePASSWORD123"`
 }
 
 type SendEmailVerificationPayload struct {
-	Email		string  	`json:"email" validate:"required,email"`
+	Email		string  	`json:"email" validate:"required,email" example:"ms3oud@example.test"`
 }
 
 type ResetUserPassPayload struct {

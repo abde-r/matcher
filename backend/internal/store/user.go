@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"log"
 	"matchaVgo/internal/auth"
+    "path/filepath"
+	"github.com/joho/godotenv"
 
 	// "matchaVgo/internal/auth"
 	"os"
@@ -144,7 +146,12 @@ func UpdateUserByToken(db *sqlx.DB, user *User) (*User, error) {
 
 func SendEmail(user_email string) {
 
-	email := "matcherx1337@gmail.com";
+	err := godotenv.Load(filepath.Join("..", ".env"))
+	if err != nil {
+		log.Fatal("Error loading .env file", err)
+	}
+
+	email := os.Getenv("EMAIL");
 	email_pass := os.Getenv("EMAIL_PASS");
 	front_url := os.Getenv("FRONT_URL");
 	
@@ -165,7 +172,11 @@ func SendEmail(user_email string) {
 
 func SendEmailPass(user_email string) (int, error) {
 
-	email := "matcherx1337@gmail.com";
+	err := godotenv.Load(filepath.Join("..", ".env"))
+	if err != nil {
+		log.Fatal("Error loading .env file", err)
+	}
+	email := os.Getenv("EMAIL");
 	email_pass := os.Getenv("EMAIL_PASS");
 	front_url := os.Getenv("FRONT_URL");
 	

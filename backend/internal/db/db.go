@@ -3,6 +3,7 @@ package db
 import (
 	"log"
 	"os"
+    "path/filepath"
 
 	"github.com/jmoiron/sqlx"
 	"github.com/joho/godotenv"
@@ -13,24 +14,25 @@ type DB struct {
 }
 
 func Connect() *sqlx.DB {
-	err := godotenv.Load(".env")
+	err := godotenv.Load(filepath.Join("..", ".env"))
 	if err != nil {
 		log.Fatal("Error loading .env file", err)
 	}
 
-	db_host := os.Getenv("DB_HOST")
-	db_port := os.Getenv("DB_PORT")
-	db_name := os.Getenv("DB_NAME")
-	db_user := os.Getenv("DB_USER")
-	db_password := os.Getenv("DB_PASSWORD")
+	db_host := os.Getenv("POSTGRES_HOST")
+	db_port := os.Getenv("POSTGRES_PORT")
+	db_name := os.Getenv("POSTGRES_DB")
+	db_user := os.Getenv("POSTGRES_USER")
+	db_password := os.Getenv("POSTGRES_PASSWORD")
 
 	connString := "host=" + db_host + " port=" + db_port + " user=" + db_user +
-		" password=" + db_password + " dbname=" + db_name + " sslmode=disable"
+        		" password=" + db_password + " dbname=" + db_name + " sslmode=disable"
 
-	db, err := sqlx.Connect("postgres", connString)
-	if err != nil {
-		log.Fatalln(err)
-	}
+	println(connString)
+    db, err := sqlx.Connect(db_user, connString)
+    if err != nil {
+        log.Fatalln("Database connection error:", err)
+    }
 
 	return db
 }

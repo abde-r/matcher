@@ -68,6 +68,26 @@ func (r *UserResolver) Location() string {
 	return r.user.Location;
 }
 
+
+
+// GraphQLUsersRequest represents the structure of a GraphQL query request
+type GraphQLUsersRequest struct {
+    Query     string                `json:"query" example:"mutation Users($input: User!) { user(input: $input) { } }"`
+    Variables struct{} `json:"variables"`
+}
+
+
+// Matcher-doc
+// @Summary Users
+// @Description Get all users
+// @Tags User
+// @Accept json
+// @Produce json
+// @Param input body GraphQLUsersRequest true "GraphQL Mutation Payload"
+// @Success 200 {object} store.User
+// @Failure 400 {object} HTTPError
+// @Failure 500 {object} HTTPError
+// @Router /users/ [post]
 func (r *Resolver) Users(ctx context.Context) ([]*UserResolver, error) {
 	var users []store.User
 	err := db.Select(&users, "SELECT * FROM users")
@@ -81,6 +101,30 @@ func (r *Resolver) Users(ctx context.Context) ([]*UserResolver, error) {
 	return userResolvers, nil
 }
 
+
+
+// GraphQLUserByIDRequest represents the structure of a GraphQL query request
+type GraphQLUserByIDRequest struct {
+    Query		string				`json:"query" example:"mutation User($input: UserByIDVariables!) { user(input: $input) { id } }"`
+    Variables	UserByIDVariables	`json:"variables"`
+}
+
+// UserByIDVariables represents the variables passed to the GraphQL request
+type UserByIDVariables struct {
+    ID string `json:"ID"`
+}
+
+// Matcher-doc
+// @Summary User by ID
+// @Description Get user by ID
+// @Tags User
+// @Accept json
+// @Produce json
+// @Param input body GraphQLUserByIDRequest true "GraphQL Mutation Payload"
+// @Success 200 {object} store.User
+// @Failure 400 {object} HTTPError
+// @Failure 500 {object} HTTPError
+// @Router /users/id [post]
 func (r *Resolver) User(ctx context.Context, args struct{ ID int32 }) (*UserResolver, error) {
 	var user store.User
 	err := db.Get(&user, "SELECT * FROM users WHERE id=$1", args.ID)
@@ -90,6 +134,29 @@ func (r *Resolver) User(ctx context.Context, args struct{ ID int32 }) (*UserReso
 	return &UserResolver{user: &user}, nil
 }
 
+
+// GraphQLUserByTokenRequest represents the structure of a GraphQL query request
+type GraphQLUserByTokenRequest struct {
+    Query		string					`json:"query" example:"mutation UserByToken($input: UserByTokenVariables!) { userByToken(input: $input) { token } }"`
+    Variables	UserByTokenVariables	`json:"variables"`
+}
+
+// UserByTokenVariables represents the variables passed to the GraphQL request
+type UserByTokenVariables struct {
+    Token string `json:"token"`
+}
+
+// Matcher-doc
+// @Summary User by Token
+// @Description Get user by token
+// @Tags User
+// @Accept json
+// @Produce json
+// @Param input body GraphQLUserByTokenRequest true "GraphQL Mutation Payload"
+// @Success 200 {object} store.User
+// @Failure 400 {object} HTTPError
+// @Failure 500 {object} HTTPError
+// @Router /users/token [post]
 func (r *Resolver) UserByToken(ctx context.Context, args struct{ Token string }) (*UserResolver, error) {
 	var user store.User
 	err := db.Get(&user, "SELECT * FROM users WHERE token=$1", args.Token)
@@ -99,6 +166,24 @@ func (r *Resolver) UserByToken(ctx context.Context, args struct{ Token string })
 	return &UserResolver{user: &user}, nil
 }
 
+
+// GraphQLProceedRegistrationRequest represents the structure of a GraphQL query request
+type GraphQLProceedRegistrationRequest struct {
+    Query		string									`json:"query" example:"mutation ProceedRegistrationUser($input: ProceedRegistrationUserPayload!) { proceedRegistrationUser(input: $input) { first_name last_name birthday gender preferences pics location token} }"`
+    Variables	store.ProceedRegistrationUserPayload	`json:"variables"`
+}
+
+// Matcher-doc
+// @Summary Proceed registration
+// @Description Proceed registration of user
+// @Tags User
+// @Accept json
+// @Produce json
+// @Param input body GraphQLProceedRegistrationRequest true "GraphQL Mutation Payload"
+// @Success 200 {object} store.User
+// @Failure 400 {object} HTTPError
+// @Failure 500 {object} HTTPError
+// @Router /users/proceed-registration [post]
 func (r *Resolver) ProceedRegistrationUser(ctx context.Context, args struct{ Input store.ProceedRegistrationUserPayload }) (*UserResolver, error) {
 	
 	user := store.User{
@@ -120,6 +205,24 @@ func (r *Resolver) ProceedRegistrationUser(ctx context.Context, args struct{ Inp
 	return &UserResolver{user: _user}, nil
 }
 
+
+// GraphQLUpdateUserRequest represents the structure of a GraphQL query request
+type GraphQLUpdateUserRequest struct {
+    Query		string									`json:"query" example:"mutation UpdateUserInfo($input: UpdateUserInfoPayload!) { updateUserInfo(input: $input) { first_name last_name birthday gender preferences pics location token} }"`
+    Variables	store.UpdateUserInfoPayload	`json:"variables"`
+}
+
+// Matcher-doc
+// @Summary Proceed registration
+// @Description Proceed registration of user
+// @Tags User
+// @Accept json
+// @Produce json
+// @Param input body GraphQLUpdateUserRequest true "GraphQL Mutation Payload"
+// @Success 200 {object} store.User
+// @Failure 400 {object} HTTPError
+// @Failure 500 {object} HTTPError
+// @Router /users/update-info [post]
 func (r *Resolver) UpdateUserInfo(ctx context.Context, args struct{ Input store.UpdateUserInfoPayload }) (*UserResolver, error) {
 	
 	user := store.User{

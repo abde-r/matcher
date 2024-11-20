@@ -1,6 +1,5 @@
 node_modules
 .env
-backend/.env
 database
 .idea
 .gitignore

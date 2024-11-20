@@ -9,10 +9,12 @@ import (
 	"matchaVgo/middleware"
 	"net/http"
 	"os"
+    "path/filepath"
 	"github.com/swaggo/http-swagger"
-	_ "matchaVgo/cmd/docs"
+	_ "matchaVgo/docs"
 
 	"github.com/gorilla/mux"
+	"github.com/joho/godotenv"
 	"github.com/graph-gophers/graphql-go"
 	"github.com/graph-gophers/graphql-go/relay"
 )
@@ -32,8 +34,27 @@ func graphqlHandler(schema *graphql.Schema) http.Handler {
 	return &relay.Handler{Schema: schema}
 }
 
+// @title           matcher API
+// @version         1.0
+// @description     This is a sample server celler server.
+// @termsOfService  http://swagger.io/terms/
+
+// @contact.name   API Support
+// @contact.url    http://www.swagger.io/support
+// @contact.email  support@swagger.io
+
+// @license.name  Apache 2.0
+// @license.url   http://www.apache.org/licenses/LICENSE-2.0.html
+
+// @host      localhost:8000
+// @BasePath  /api/v1
+
+// @securityDefinitions.basic  BasicAuth
+
+// @externalDocs.description  matcherAPI
+// @externalDocs.url          https://swagger.io/resources/open-api/
 func Ga33ad_server() error {
-	
+
 	db := db.Connect();
 
 	// Read and parse the schema
@@ -46,7 +67,6 @@ func Ga33ad_server() error {
 
 	// Parent route
 	apiRouter := router.PathPrefix("/api/v1").Subrouter();
-
 	// Subrouter for swagger
 	apiRouter.PathPrefix("/swagger/").Handler(httpSwagger.WrapHandler);
 
@@ -72,6 +92,10 @@ func Ga33ad_server() error {
 	wrappedRouter := auth.WithResponseWriter(corsHandler);
 
 	// Start the server
+	err := godotenv.Load(filepath.Join("..", ".env"))
+	if err != nil {
+		log.Fatal("Error loading .env file", err)
+	}
 	backendPort := os.Getenv("BACKEND_PORT");
 	log.Println("✨ Running on port", backendPort, "..");
 	return http.ListenAndServe(":"+backendPort, wrappedRouter);

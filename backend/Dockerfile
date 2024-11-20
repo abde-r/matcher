@@ -8,7 +8,7 @@ RUN go mod tidy
 RUN go install github.com/swaggo/swag/cmd/swag@latest
 RUN go get -u github.com/swaggo/gin-swagger
 RUN go get -u github.com/swaggo/files
-RUN swag init -g main.go -d ./cmd
+RUN swag init -g cmd/main.go
 RUN apk add --no-cache make
 RUN make build
 
