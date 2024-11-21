@@ -3,7 +3,7 @@ package db
 import (
 	"log"
 	"os"
-    "path/filepath"
+	"path/filepath"
 
 	"github.com/jmoiron/sqlx"
 	"github.com/joho/godotenv"
@@ -26,13 +26,12 @@ func Connect() *sqlx.DB {
 	db_password := os.Getenv("POSTGRES_PASSWORD")
 
 	connString := "host=" + db_host + " port=" + db_port + " user=" + db_user +
-        		" password=" + db_password + " dbname=" + db_name + " sslmode=disable"
+		" password=" + db_password + " dbname=" + db_name + " sslmode=disable"
 
-	println(connString)
-    db, err := sqlx.Connect(db_user, connString)
-    if err != nil {
-        log.Fatalln("Database connection error:", err)
-    }
+	db, err := sqlx.Connect(db_user, connString)
+	if err != nil {
+		log.Fatalln("Database connection error:", err)
+	}
 
 	return db
 }

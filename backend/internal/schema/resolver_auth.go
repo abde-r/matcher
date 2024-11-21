@@ -11,14 +11,14 @@ import (
 
 // GraphQLUserRegistrationRequest represents the structure of a GraphQL query request
 type GraphQLUserRegistrationRequest struct {
-    Query     string                `json:"query" example:"mutation RegisterUser($input: RegisterUserInput!) { registerUser(input: $input) { username email password } }"`
-    Variables store.RegisterUserPayload `json:"variables"`
+    Query     string					`json:"query" example:"mutation RegisterUser($input: RegisterUserInput!) { registerUser(input: $input) { username email password } }"`
+    Variables store.RegisterUserPayload	`json:"variables"`
 }
 
 // HTTPError represents the structure of an error response
 type HTTPError struct {
-    Code    int    `json:"code" example:"400"`
-    Message string `json:"message" example:"Invalid input"`
+    Code    int    `json:"code"		example:"400"`
+    Message string `json:"message"	example:"Invalid input"`
 }
 
 // Matcher-doc
@@ -73,8 +73,8 @@ func (r *Resolver) RegisterUser(ctx context.Context, args struct{ Input store.Re
 
 // GraphQLUserLoginRequest represents the structure of a GraphQL query request
 type GraphQLUserLoginRequest struct {
-    Query     string                `json:"query" example:"mutation LoginUser($input: LoginUserInput!) { loginUser(input: $input) { username password } }"`
-    Variables store.LoginUserPayload `json:"variables"`
+    Query     string					`json:"query" example:"mutation LoginUser($input: LoginUserInput!) { loginUser(input: $input) { username password } }"`
+    Variables store.LoginUserPayload	`json:"variables"`
 }
 
 // Matcher-doc
@@ -108,8 +108,8 @@ func (r *Resolver) LoginUser(ctx context.Context, args struct{ Input store.Login
 
 // GraphQLEmailVerificationRequest represents the structure of a GraphQL query request
 type GraphQLEmailVerificationRequest struct {
-    Query     string                `json:"query" example:"mutation SendEmailVerification($input: SendEmailVerificationPayload!) { sendEmailVerification(input: $input) { email } }"`
-    Variables store.SendEmailVerificationPayload `json:"variables"`
+    Query     string								`json:"query" example:"mutation SendEmailVerification($input: SendEmailVerificationPayload!) { sendEmailVerification(input: $input) { email } }"`
+    Variables store.SendEmailVerificationPayload	`json:"variables"`
 }
 
 // Matcher-doc
