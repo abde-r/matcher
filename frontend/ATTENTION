@@ -1,0 +1,4 @@
+please use the following command when trying to install the packages:
+```
+npm i --legacy-peer-deps
+```
