@@ -11,6 +11,9 @@ import { HeartIcon, XIcon } from 'lucide-react'
 export function AuthCardComponent() {
   const [isLogin, setIsLogin] = useState(true)
   const [dragX, setDragX] = useState(0)
+  const [name, setName] = useState('')
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('');
 
   const handleDragEnd = (event: MouseEvent | TouchEvent | PointerEvent, info: any) => {
     if (info.offset.x > 100) {
@@ -23,8 +26,43 @@ export function AuthCardComponent() {
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
-    // Handle form submission here
-    console.log('Form submitted:', isLogin ? 'Login' : 'Sign Up')
+    if (!isLogin) {
+      //Handle register request
+      fetch(`${process.env.API_URL}/api/v1/auth/register`, {
+        method: 'POST',
+          headers: {
+              'Content-Type': 'application/json',
+          },
+          credentials: 'include',
+          body: JSON.stringify({
+            query:`
+              mutation RegisterUser($input: RegisterUserInput!) {
+                registerUser(input: $input) {
+                  username,
+                  email,
+                  password,
+                }
+              }
+            `,
+            variables: {
+              input: {
+                username: 'madani',
+                email: 'madani.badaoui@gmail.com',
+                password: 'hamid.ma',
+              }
+            }
+          }),
+      })
+      .then((res) => {
+        if (res.ok) {
+          return res.json();
+        } else {
+          console.log('Error:', res)
+        }
+      })
+    } else {
+      //Handle login request
+    }
   }
 
   return (
@@ -61,7 +99,7 @@ export function AuthCardComponent() {
                   {!isLogin && (
                     <div className="space-y-2">
                       <Label htmlFor="name" className="text-gray-700">Name</Label>
-                      <Input id="name" placeholder="Enter your name" required className="bg-gray-100 border-gray-300" />
+                      <Input id="name" placeholder="Enter your name" required className="bg-gray-100 border-gray-300"  />
                     </div>
                   )}
                   <div className="space-y-2">
