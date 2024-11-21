@@ -1,16 +1,20 @@
 package store
 
 import (
+	"context"
+	"database/sql"
+	"fmt"
 	"net/http"
 	"sync"
+	"time"
 
+	"github.com/go-redis/redis/v8"
 	"github.com/gorilla/websocket"
 )
 
 // Upgrader settings to get the *Conn type
 var upgrader = websocket.Upgrader{
-	ReadBufferSize:  1024,
-	WriteBufferSize: 1024,
+	CheckOrigin: func(r *http.Request) bool { return true }, // To change later
 }
 
 // Client represents a connected user
@@ -37,6 +41,7 @@ var hub = Hub{
 }
 
 func WebSocketHandler(w http.ResponseWriter, r *http.Request) {
+	// TO ADD websockets auth using tokens
 	conn, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
 		println("Upgrade error: ", err)
@@ -87,13 +92,13 @@ func HubRunner() {
 			hub.mux.Lock()
 			hub.Clients[client] = true
 			hub.mux.Unlock()
-			println("Client Connected 🤝 🤝: %s", client.ID)
+			println("Client Connected 🤝: %s", client.ID)
 		case client := <-hub.Unregister:
 			hub.mux.Lock()
 			if _, ok := hub.Clients[client]; ok {
 				delete(hub.Clients, client)
 				close(client.Send)
-				println("Client Disonnected 🫱 🫲: %s", client.ID)
+				println("Client Disonnected 🚫: %s", client.ID)
 			}
 			hub.mux.Unlock()
 		case message := <-hub.Broadcast:
@@ -109,4 +114,28 @@ func HubRunner() {
 			hub.mux.Unlock()
 		}
 	}
+}
+
+func CreateMessage(db *sql.DB, message MessagePayload) error {
+	_, err := db.Exec("INSERT INTO messages (sender_id, receiver_id, content, timestamp) VALUES ($1, $2, $3, $4)",
+		message.SenderID, message.ReceiverID, message.Content, message.Timestamp)
+	return err
+}
+
+var ctx = context.Background()
+var rdb = redis.NewClient(&redis.Options{
+	Addr: "localhost:6379", // redis server addres
+})
+
+func SendMessage(sender, receiver, message string) error {
+	chatStream := fmt.Sprintf("chat:%s:%s", sender, receiver)
+	_, err := rdb.XAdd(ctx, &redis.XAddArgs{
+		Stream: chatStream,
+		Values: map[string]interface{}{
+			"sender":  sender,
+			"message": message,
+			"time":    time.Now().Unix(),
+		},
+	}).Result()
+	return err
 }

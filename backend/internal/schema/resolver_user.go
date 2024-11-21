@@ -16,7 +16,7 @@ type UserResolver struct {
 
 // ErrorResponse
 type ErrorResponse struct {
-    Message string `json:"message"`
+	Message string `json:"message"`
 }
 
 // Field resolvers for User
@@ -49,33 +49,30 @@ func (r *UserResolver) Gender() bool {
 }
 
 func (r *UserResolver) Birthday() string {
-	return r.user.Birthday;
+	return r.user.Birthday
 }
 
 func (r *UserResolver) Preferences() string {
-	return r.user.Preferences;
+	return r.user.Preferences
 }
 
 func (r *UserResolver) Pics() string {
-	return r.user.Pics;
+	return r.user.Pics
 }
 
 func (r *UserResolver) Token() string {
-	return r.user.Token;
+	return r.user.Token
 }
 
 func (r *UserResolver) Location() string {
-	return r.user.Location;
+	return r.user.Location
 }
-
-
 
 // GraphQLUsersRequest represents the structure of a GraphQL query request
 type GraphQLUsersRequest struct {
-    Query     string                `json:"query" example:"mutation Users($input: User!) { user(input: $input) { } }"`
-    Variables struct{} `json:"variables"`
+	Query     string   `json:"query" example:"mutation Users($input: User!) { user(input: $input) { } }"`
+	Variables struct{} `json:"variables"`
 }
-
 
 // Matcher-doc
 // @Summary Users
@@ -101,17 +98,15 @@ func (r *Resolver) Users(ctx context.Context) ([]*UserResolver, error) {
 	return userResolvers, nil
 }
 
-
-
 // GraphQLUserByIDRequest represents the structure of a GraphQL query request
 type GraphQLUserByIDRequest struct {
-    Query		string				`json:"query" example:"mutation User($input: UserByIDVariables!) { user(input: $input) { id } }"`
-    Variables	UserByIDVariables	`json:"variables"`
+	Query     string            `json:"query" example:"mutation User($input: UserByIDVariables!) { user(input: $input) { id } }"`
+	Variables UserByIDVariables `json:"variables"`
 }
 
 // UserByIDVariables represents the variables passed to the GraphQL request
 type UserByIDVariables struct {
-    ID string `json:"ID"`
+	ID string `json:"ID"`
 }
 
 // Matcher-doc
@@ -134,16 +129,15 @@ func (r *Resolver) User(ctx context.Context, args struct{ ID int32 }) (*UserReso
 	return &UserResolver{user: &user}, nil
 }
 
-
 // GraphQLUserByTokenRequest represents the structure of a GraphQL query request
 type GraphQLUserByTokenRequest struct {
-    Query		string					`json:"query" example:"mutation UserByToken($input: UserByTokenVariables!) { userByToken(input: $input) { token } }"`
-    Variables	UserByTokenVariables	`json:"variables"`
+	Query     string               `json:"query" example:"mutation UserByToken($input: UserByTokenVariables!) { userByToken(input: $input) { token } }"`
+	Variables UserByTokenVariables `json:"variables"`
 }
 
 // UserByTokenVariables represents the variables passed to the GraphQL request
 type UserByTokenVariables struct {
-    Token string `json:"token"`
+	Token string `json:"token"`
 }
 
 // Matcher-doc
@@ -166,11 +160,10 @@ func (r *Resolver) UserByToken(ctx context.Context, args struct{ Token string })
 	return &UserResolver{user: &user}, nil
 }
 
-
 // GraphQLProceedRegistrationRequest represents the structure of a GraphQL query request
 type GraphQLProceedRegistrationRequest struct {
-    Query		string									`json:"query" example:"mutation ProceedRegistrationUser($input: ProceedRegistrationUserPayload!) { proceedRegistrationUser(input: $input) { first_name last_name birthday gender preferences pics location token} }"`
-    Variables	store.ProceedRegistrationUserPayload	`json:"variables"`
+	Query     string                               `json:"query" example:"mutation ProceedRegistrationUser($input: ProceedRegistrationUserPayload!) { proceedRegistrationUser(input: $input) { first_name last_name birthday gender preferences pics location token} }"`
+	Variables store.ProceedRegistrationUserPayload `json:"variables"`
 }
 
 // Matcher-doc
@@ -184,20 +177,22 @@ type GraphQLProceedRegistrationRequest struct {
 // @Failure 400 {object} HTTPError
 // @Failure 500 {object} HTTPError
 // @Router /users/proceed-registration [post]
-func (r *Resolver) ProceedRegistrationUser(ctx context.Context, args struct{ Input store.ProceedRegistrationUserPayload }) (*UserResolver, error) {
-	
+func (r *Resolver) ProceedRegistrationUser(ctx context.Context, args struct {
+	Input store.ProceedRegistrationUserPayload
+}) (*UserResolver, error) {
+
 	user := store.User{
-		First_name: args.Input.First_name,
-		Last_name:  args.Input.Last_name,
+		First_name:  args.Input.First_name,
+		Last_name:   args.Input.Last_name,
 		Birthday:    args.Input.Birthday,
-		Gender:    args.Input.Gender,
-		Preferences:    args.Input.Preferences,
-		Pics: args.Input.Pics,
-		Location: args.Input.Location,
-		Token: args.Input.Token,
+		Gender:      args.Input.Gender,
+		Preferences: args.Input.Preferences,
+		Pics:        args.Input.Pics,
+		Location:    args.Input.Location,
+		Token:       args.Input.Token,
 	}
 
-	_user, err := store.UpdateUserByToken(db, &user);	
+	_user, err := store.UpdateUserByToken(db, &user)
 	if err != nil {
 		return nil, err
 	}
@@ -205,11 +200,10 @@ func (r *Resolver) ProceedRegistrationUser(ctx context.Context, args struct{ Inp
 	return &UserResolver{user: _user}, nil
 }
 
-
 // GraphQLUpdateUserRequest represents the structure of a GraphQL query request
 type GraphQLUpdateUserRequest struct {
-    Query		string									`json:"query" example:"mutation UpdateUserInfo($input: UpdateUserInfoPayload!) { updateUserInfo(input: $input) { first_name last_name birthday gender preferences pics location token} }"`
-    Variables	store.UpdateUserInfoPayload	`json:"variables"`
+	Query     string                      `json:"query" example:"mutation UpdateUserInfo($input: UpdateUserInfoPayload!) { updateUserInfo(input: $input) { first_name last_name birthday gender preferences pics location token} }"`
+	Variables store.UpdateUserInfoPayload `json:"variables"`
 }
 
 // Matcher-doc
@@ -224,18 +218,18 @@ type GraphQLUpdateUserRequest struct {
 // @Failure 500 {object} HTTPError
 // @Router /users/update-info [post]
 func (r *Resolver) UpdateUserInfo(ctx context.Context, args struct{ Input store.UpdateUserInfoPayload }) (*UserResolver, error) {
-	
+
 	user := store.User{
-		First_name: args.Input.First_name,
-		Last_name:  args.Input.Last_name,
+		First_name:  args.Input.First_name,
+		Last_name:   args.Input.Last_name,
 		Birthday:    args.Input.Birthday,
-		Preferences:    args.Input.Preferences,
-		Pics: args.Input.Pics,
-		Location: args.Input.Location,
-		Token: args.Input.Token,
+		Preferences: args.Input.Preferences,
+		Pics:        args.Input.Pics,
+		Location:    args.Input.Location,
+		Token:       args.Input.Token,
 	}
 
-	_user, err := store.UpdateUserByToken(db, &user);	
+	_user, err := store.UpdateUserByToken(db, &user)
 	if err != nil {
 		return nil, err
 	}
