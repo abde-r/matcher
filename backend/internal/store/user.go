@@ -2,10 +2,10 @@ package store
 
 import (
 	"fmt"
+	"github.com/joho/godotenv"
 	"log"
 	"matchaVgo/internal/auth"
-    "path/filepath"
-	"github.com/joho/godotenv"
+	"path/filepath"
 
 	// "matchaVgo/internal/auth"
 	"os"
@@ -15,29 +15,29 @@ import (
 )
 
 func GetAllUsers(db *sqlx.DB) ([]User, error) {
-    var users []User;
-    err := db.Select(&users, "SELECT * FROM users");
-    return users, err;
+	var users []User
+	err := db.Select(&users, "SELECT * FROM users")
+	return users, err
 }
 
 func GetUserById(db *sqlx.DB, id int64) (*User, error) {
 
-	var user User;
-	err := db.Get(&user, "SELECT * FROM users WHERE id=$1", id);
+	var user User
+	err := db.Get(&user, "SELECT * FROM users WHERE id=$1", id)
 	if err != nil {
-		return nil, err;
+		return nil, err
 	}
-	return &user, nil;
+	return &user, nil
 }
 
 func GetUserByEmail(db *sqlx.DB, email string) (*User, error) {
 
-	var user User;
-	err := db.Get(&user, "SELECT * FROM users WHERE email=$1", email);
+	var user User
+	err := db.Get(&user, "SELECT * FROM users WHERE email=$1", email)
 	if err != nil {
-		return nil, err;
+		return nil, err
 	}
-	return &user, nil;
+	return &user, nil
 }
 
 func GetUserByUsername(db *sqlx.DB, username string) int64 {
@@ -63,32 +63,32 @@ func GetUserIDByEmail(db *sqlx.DB, email string) int64 {
 }
 
 func CreateUser(db *sqlx.DB, user *User) (int32, error) {
-    
+
 	var id int32
-    err := db.QueryRow(
-        "INSERT INTO users (username, email, password) VALUES ($1, $2, $3) RETURNING id",
-        user.Username, user.Email, user.Password,
-    ).Scan(&id)
-    if err != nil {
-        return -1, err
-    }
-    return id, nil
+	err := db.QueryRow(
+		"INSERT INTO users (username, email, password) VALUES ($1, $2, $3) RETURNING id",
+		user.Username, user.Email, user.Password,
+	).Scan(&id)
+	if err != nil {
+		return -1, err
+	}
+	return id, nil
 }
 
 func UpdateUserToken(db *sqlx.DB, user *User, token string) (string, error) {
-    
+
 	// secret := []byte(os.Getenv("JWT_SECRET_TOKEN"));
 	// token, err := auth.CreateJWT(int(user.ID));
-    // if err != nil {
-    //     log.Fatal(err);
-    // }
+	// if err != nil {
+	//     log.Fatal(err);
+	// }
 
 	_, err := db.Exec("UPDATE users SET token = $1 WHERE id = $2", token, user.ID)
-    if err != nil {
+	if err != nil {
 		return "", err
 	}
 
-	return token, nil;
+	return token, nil
 }
 
 func UpdateUser(db *sqlx.DB, user *User) (*User, error) {
@@ -111,11 +111,11 @@ func UpdateUserPassword(db *sqlx.DB, user *ResetUserPassPayload) (*User, error) 
 
 	hashedPassword, er := auth.HashPassword(user.Password)
 	if er != nil {
-        log.Fatalln(er);
+		log.Fatalln(er)
 	}
 
 	_, err := db.Exec("UPDATE users SET password = $1 WHERE token = $2", hashedPassword, user.Token)
-    if err != nil {
+	if err != nil {
 		return nil, err
 	}
 
@@ -144,55 +144,76 @@ func UpdateUserByToken(db *sqlx.DB, user *User) (*User, error) {
 	return updatedUser, nil
 }
 
-func SendEmail(user_email string) {
+func UpdateUserVerifyStatus(db *sqlx.DB, user_id string) (*User, error) {
 
-	err := godotenv.Load(filepath.Join("..", ".env"))
+	_, err := db.Exec("UPDATE users SET verified = $1 WHERE id = $2", true, user_id)
 	if err != nil {
-		log.Fatal("Error loading .env file", err)
+		return nil, err
 	}
 
-	email := os.Getenv("EMAIL");
-	email_pass := os.Getenv("EMAIL_PASS");
-	front_url := os.Getenv("FRONT_URL");
-	
-	mail := gomail.NewMessage();
-	mail.SetHeader("From", email);
-	mail.SetHeader("To", user_email);
-	mail.SetHeader("Subject", "MatcherX account verification");
-
-	body := fmt.Sprintf(`<div><a href="%s"><b>Clicki 3la had lb3ar!</b></a> <br> <img src="%s" alt="img" /></div>`, front_url+"/proceed-signup", "https://media.makeameme.org/created/fact-no-verification.jpg");
-	mail.SetBody("text/html", body);
-
-	d := gomail.NewDialer("smtp.gmail.com", 587, email, email_pass);
-	if err := d.DialAndSend(mail); err != nil {
-		log.Print(err);
+	updatedUser := &User{}
+	err = db.Get(updatedUser, "SELECT * FROM users WHERE id = $1", user_id)
+	if err != nil {
+		return nil, err
 	}
-	
+
+	return updatedUser, nil
 }
 
-func SendEmailPass(user_email string) (int, error) {
+func SendVerificationEmail(user_email string, token string) {
 
 	err := godotenv.Load(filepath.Join("..", ".env"))
 	if err != nil {
 		log.Fatal("Error loading .env file", err)
 	}
-	email := os.Getenv("EMAIL");
-	email_pass := os.Getenv("EMAIL_PASS");
-	front_url := os.Getenv("FRONT_URL");
-	
-	mail := gomail.NewMessage();
-	mail.SetHeader("From", email);
-	mail.SetHeader("To", user_email);
-	mail.SetHeader("Subject", "MatcherX Reset Password");
 
-	body := fmt.Sprintf(`<div><strong>nb9aw khdamin meak gha NTA?!</strong><a href="%s"><b>Clicki 3la had lb3ar!</b></a> <br> <img src="%s" alt="img" /></div>`, front_url+"/reset-pass", "https://i.pinimg.com/736x/f4/9c/c1/f49cc131e4c5c28c5697b15f67bb321f.jpg");
-	mail.SetBody("text/html", body);
+	email := os.Getenv("EMAIL")
+	email_pass := os.Getenv("EMAIL_PASS")
+	front_url := os.Getenv("FRONT_URL")
 
-	d := gomail.NewDialer("smtp.gmail.com", 587, email, email_pass);
-	if err := d.DialAndSend(mail); err != nil {
-		log.Print(err);
-		return -1, err;
+	mail := gomail.NewMessage()
+	mail.SetHeader("From", email)
+	mail.SetHeader("To", user_email)
+	mail.SetHeader("Subject", "Matcher account verification")
+
+	// The token in URL request must not be the user's one it must be encrypted or something
+	encryptedEncryptedToken, err := auth.EncryptEncryptedToken(token)
+	if err != nil {
+		log.Print("Error enctypting encrypted token: ", err)
 	}
-	
-	return 1, nil;
+	body := fmt.Sprintf(`<div><a href="%s/proceed-signup?token=%s"><b>Click the link to verify your account!</b></a> <br> <img src="%s" alt="img" /></div>`, front_url, encryptedEncryptedToken, "https://media.makeameme.org/created/fact-no-verification.jpg")
+	mail.SetBody("text/html", body)
+
+	d := gomail.NewDialer("smtp.gmail.com", 587, email, email_pass)
+	if err := d.DialAndSend(mail); err != nil {
+		log.Print(err)
+	}
+
+}
+
+func SendResetPassEmail(user_email string) (int, error) {
+
+	err := godotenv.Load(filepath.Join("..", ".env"))
+	if err != nil {
+		log.Fatal("Error loading .env file", err)
+	}
+	email := os.Getenv("EMAIL")
+	email_pass := os.Getenv("EMAIL_PASS")
+	front_url := os.Getenv("FRONT_URL")
+
+	mail := gomail.NewMessage()
+	mail.SetHeader("From", email)
+	mail.SetHeader("To", user_email)
+	mail.SetHeader("Subject", "MatcherX Reset Password")
+
+	body := fmt.Sprintf(`<div><strong>nb9aw khdamin meak gha NTA?!</strong><a href="%s"><b>Clicki 3la had lb3ar!</b></a> <br> <img src="%s" alt="img" /></div>`, front_url+"/reset-pass", "https://i.pinimg.com/736x/f4/9c/c1/f49cc131e4c5c28c5697b15f67bb321f.jpg")
+	mail.SetBody("text/html", body)
+
+	d := gomail.NewDialer("smtp.gmail.com", 587, email, email_pass)
+	if err := d.DialAndSend(mail); err != nil {
+		log.Print(err)
+		return -1, err
+	}
+
+	return 1, nil
 }

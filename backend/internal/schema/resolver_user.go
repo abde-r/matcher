@@ -151,9 +151,9 @@ type UserByTokenVariables struct {
 // @Failure 400 {object} HTTPError
 // @Failure 500 {object} HTTPError
 // @Router /users/token [post]
-func (r *Resolver) UserByToken(ctx context.Context, args struct{ Token string }) (*UserResolver, error) {
+func (r *Resolver) UserByToken(ctx context.Context, token string) (*UserResolver, error) {
 	var user store.User
-	err := db.Get(&user, "SELECT * FROM users WHERE token=$1", args.Token)
+	err := db.Get(&user, "SELECT * FROM users WHERE token=$1", token)
 	if err != nil {
 		return nil, err
 	}

@@ -6,6 +6,8 @@ import (
 	"log"
 	"matchaVgo/internal/auth"
 	"matchaVgo/internal/store"
+
+	"github.com/golang-jwt/jwt"
 )
 
 // GraphQLUserRegistrationRequest represents the structure of a GraphQL query request
@@ -16,8 +18,8 @@ type GraphQLUserRegistrationRequest struct {
 
 // HTTPError represents the structure of an error response
 type HTTPError struct {
-	Code    int    `json:"code"		example:"400"`
-	Message string `json:"message"	example:"Invalid input"`
+	Code    int    `json:"code" example:"400"`
+	Message string `json:"message" example:"Invalid input"`
 }
 
 // Matcher-doc
@@ -62,7 +64,8 @@ func (r *Resolver) RegisterUser(ctx context.Context, args struct{ Input store.Re
 
 	store.UpdateUserToken(db, &newUser, token)
 
-	store.SendEmail("spamsama91@gmail.com")
+	// static Email must be changed later to newUser.Email
+	store.SendVerificationEmail("spamsama91@gmail.com", token)
 
 	return &UserResolver{user: &newUser}, nil
 }
@@ -127,13 +130,75 @@ func (r *Resolver) SendEmailVerification(ctx context.Context, args struct {
 		return nil, errors.New("invalid email")
 	}
 
-	_, err = store.SendEmailPass(args.Input.Email)
+	_, err = store.SendResetPassEmail(args.Input.Email)
 	if err != nil {
 		log.Fatal(err)
 		return nil, err
 	}
 
 	return &UserResolver{user: user}, nil
+}
+
+// GraphQLAccountVerificationRequest represents the structure of a GraphQL query request
+type GraphQLAccountVerificationRequest struct {
+	Query     string                             `json:"query" example:"mutation SendEmailVerification($input: SendEmailVerificationPayload!) { sendEmailVerification(input: $input) { email } }"`
+	Variables store.SendEmailVerificationPayload `json:"variables"`
+}
+
+type VerifyAccountResponse struct {
+	Status  bool   `json:"status"`
+	Message string `json:"message"`
+}
+
+// Matcher-doc
+// @Summary Account verification
+// @Description Account verification of new registred user
+// @Tags Auth
+// @Accept json
+// @Produce json
+// @Param input body GraphQLAccountVerificationRequest true "GraphQL Mutation Payload"
+// @Success 200 {object} store.User
+// @Failure 400 {object} HTTPError
+// @Failure 500 {object} HTTPError
+// @Router /auth/send-verification-email [post]
+func (r *Resolver) AccountVerification(ctx context.Context, args struct{ Token string }) (*VerifyAccountResponse, error) {
+
+	// Check if token exists
+	token := args.Token
+	if token == "" {
+		return &VerifyAccountResponse{
+			Status:  false,
+			Message: "Token is required",
+		}, nil
+	}
+
+	// Validate Token
+	claims := jwt.MapClaims{}
+	_token, err := jwt.ParseWithClaims(token, claims, func(token *jwt.Token) (interface{}, error) {
+		return []byte(r.SecretKey), nil
+	})
+
+	if err != nil || !_token.Valid {
+		return &VerifyAccountResponse{
+			Status:  false,
+			Message: "Invalid or expired token",
+		}, nil
+	}
+
+	// Update user verified status
+	decryptedToken, err := auth.DycreptEncryptedToken(args.Token)
+	user, _ := r.UserByToken(ctx, decryptedToken)
+	_, err = store.UpdateUserVerifyStatus(db, string(user.ID()))
+	if err != nil {
+		return &VerifyAccountResponse{
+			Status:  false,
+			Message: "Failed to verify account",
+		}, nil
+	}
+	return &VerifyAccountResponse{
+		Status:  true,
+		Message: "Account verified successfully",
+	}, nil
 }
 
 // GraphQLPasswordResetRequest represents the structure of a GraphQL query request
