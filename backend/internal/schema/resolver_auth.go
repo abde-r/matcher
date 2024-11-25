@@ -186,9 +186,9 @@ func (r *Resolver) AccountVerification(ctx context.Context, args struct{ Token s
 	}
 
 	// Update user verified status
-	decryptedToken, err := auth.DycreptEncryptedToken(args.Token)
-	user, _ := r.UserByToken(ctx, decryptedToken)
-	_, err = store.UpdateUserVerifyStatus(db, string(user.ID()))
+	decryptedToken, _ := auth.DycreptEncryptedToken(args.Token)
+	user, _ := store.GetUserByToken(db, decryptedToken)
+	_, err = store.UpdateUserVerifyStatus(db, string(user.ID))
 	if err != nil {
 		return &VerifyAccountResponse{
 			Status:  false,

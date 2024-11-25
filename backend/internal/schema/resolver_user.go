@@ -68,6 +68,10 @@ func (r *UserResolver) Location() string {
 	return r.user.Location
 }
 
+func (r *UserResolver) Verified() string {
+	return r.user.Verified
+}
+
 // GraphQLUsersRequest represents the structure of a GraphQL query request
 type GraphQLUsersRequest struct {
 	Query     string   `json:"query" example:"mutation Users($input: User!) { user(input: $input) { } }"`
@@ -129,36 +133,36 @@ func (r *Resolver) User(ctx context.Context, args struct{ ID int32 }) (*UserReso
 	return &UserResolver{user: &user}, nil
 }
 
-// GraphQLUserByTokenRequest represents the structure of a GraphQL query request
-type GraphQLUserByTokenRequest struct {
-	Query     string               `json:"query" example:"mutation UserByToken($input: UserByTokenVariables!) { userByToken(input: $input) { token } }"`
-	Variables UserByTokenVariables `json:"variables"`
-}
+// // GraphQLUserByTokenRequest represents the structure of a GraphQL query request
+// type GraphQLUserByTokenRequest struct {
+// 	Query     string               `json:"query" example:"mutation UserByToken($input: UserByTokenVariables!) { userByToken(input: $input) { token } }"`
+// 	Variables UserByTokenVariables `json:"variables"`
+// }
 
-// UserByTokenVariables represents the variables passed to the GraphQL request
-type UserByTokenVariables struct {
-	Token string `json:"token"`
-}
+// // UserByTokenVariables represents the variables passed to the GraphQL request
+// type UserByTokenVariables struct {
+// 	Token string `json:"token"`
+// }
 
-// Matcher-doc
-// @Summary User by Token
-// @Description Get user by token
-// @Tags User
-// @Accept json
-// @Produce json
-// @Param input body GraphQLUserByTokenRequest true "GraphQL Mutation Payload"
-// @Success 200 {object} store.User
-// @Failure 400 {object} HTTPError
-// @Failure 500 {object} HTTPError
-// @Router /users/token [post]
-func (r *Resolver) UserByToken(ctx context.Context, token string) (*UserResolver, error) {
-	var user store.User
-	err := db.Get(&user, "SELECT * FROM users WHERE token=$1", token)
-	if err != nil {
-		return nil, err
-	}
-	return &UserResolver{user: &user}, nil
-}
+// // Matcher-doc
+// // @Summary User by Token
+// // @Description Get user by token
+// // @Tags User
+// // @Accept json
+// // @Produce json
+// // @Param input body GraphQLUserByTokenRequest true "GraphQL Mutation Payload"
+// // @Success 200 {object} store.User
+// // @Failure 400 {object} HTTPError
+// // @Failure 500 {object} HTTPError
+// // @Router /users/token [post]
+// func (r *Resolver) UserByToken(ctx context.Context, token string) (*UserResolver, error) {
+// 	var user store.User
+// 	err := db.Get(&user, "SELECT * FROM users WHERE token=$1", token)
+// 	if err != nil {
+// 		return nil, err
+// 	}
+// 	return &UserResolver{user: &user}, nil
+// }
 
 // GraphQLProceedRegistrationRequest represents the structure of a GraphQL query request
 type GraphQLProceedRegistrationRequest struct {

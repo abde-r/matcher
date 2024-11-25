@@ -24,6 +24,7 @@ type User struct {
 	Pics        string `db:"pics"`
 	Location    string `db:"location"`
 	Token       string `db:"token"`
+	Verified    string `db:"verified"`
 }
 
 // RegisterUserPayload represents the payload for user registration

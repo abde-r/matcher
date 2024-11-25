@@ -40,6 +40,16 @@ func GetUserByEmail(db *sqlx.DB, email string) (*User, error) {
 	return &user, nil
 }
 
+func GetUserByToken(db *sqlx.DB, token string) (*User, error) {
+
+	var user User
+	err := db.Get(&user, "SELECT * FROM users WHERE token=$1", token)
+	if err != nil {
+		return nil, err
+	}
+	return &user, nil
+}
+
 func GetUserByUsername(db *sqlx.DB, username string) int64 {
 
 	var id int64

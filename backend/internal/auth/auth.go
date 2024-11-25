@@ -3,6 +3,7 @@ package auth
 import (
 	// "os"
 	"context"
+	"fmt"
 	"net/http"
 	"os"
 	"strconv"
@@ -106,7 +107,7 @@ func SetCookiza(ctx context.Context, user_id int) (string, error) {
 
 func EncryptEncryptedToken(encryptedtoken string) (string, error) {
 	// expiration := time.Second * time.Duration(3600*24*7)
-	secret := os.Getenv("JWT_SECRET_TOKEN")
+	secret := os.Getenv("JWT_ENCRYPTED_SECRET_TOKEN")
 	jwt_secret := []byte(secret)
 	expiration := time.Minute * 15
 
@@ -124,6 +125,21 @@ func EncryptEncryptedToken(encryptedtoken string) (string, error) {
 }
 
 func DycreptEncryptedToken(encryptedtoken string) (string, error) {
+	secret := os.Getenv("JWT_ENCRYPTED_SECRET_TOKEN")
+	jwt_secret := []byte(secret)
+	token, err := jwt.Parse(encryptedtoken, func(token *jwt.Token) (interface{}, error) {
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, fmt.Errorf("Unexpected signing method: %v", token.Header["alg"])
+		}
+		return jwt_secret, nil
+	})
 
-	return "", nil
+	if err != nil {
+		return "", err
+	}
+	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
+		return claims["userID"].(string), nil
+	}
+
+	return "", fmt.Errorf("Invalid token")
 }
