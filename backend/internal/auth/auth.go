@@ -3,6 +3,7 @@ package auth
 import (
 	// "os"
 	"context"
+	"fmt"
 	"net/http"
 	"os"
 	"strconv"
@@ -15,17 +16,16 @@ import (
 func CreateJWT(userId int) (string, error) {
 
 	// expiration := time.Second * time.Duration(3600*24*7)
-	secret := os.Getenv("JWT_SECRET_TOKEN");
-	jwt_secret := []byte(secret);
-	expiration := time.Minute * 15;
-
+	secret := os.Getenv("JWT_SECRET_TOKEN")
+	jwt_secret := []byte(secret)
+	expiration := time.Minute * 15
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"userId":    strconv.Itoa(int(userId)),
 		"expiresAt": time.Now().Add(expiration).Unix(),
 	})
 
-	tokenString, err := token.SignedString(jwt_secret);
+	tokenString, err := token.SignedString(jwt_secret)
 	if err != nil {
 		return "", err
 	}
@@ -65,8 +65,8 @@ func ComparePasswords(hashed string, plain []byte) bool {
 	return err == nil
 }
 
-
 type contextKey string
+
 const responseWriterKey contextKey = "responseWriter"
 
 func WithResponseWriter(next http.Handler) http.Handler {
@@ -83,9 +83,9 @@ func getResponseWriter(ctx context.Context) (http.ResponseWriter, bool) {
 
 func SetCookiza(ctx context.Context, user_id int) (string, error) {
 
-	token, err := CreateJWT(int(user_id));
+	token, err := CreateJWT(int(user_id))
 	if err != nil {
-		return "", err;
+		return "", err
 	}
 
 	// Extract the HTTP response writer from the context
@@ -95,12 +95,51 @@ func SetCookiza(ctx context.Context, user_id int) (string, error) {
 			Value:    token,
 			Path:     "/",
 			Expires:  time.Now().Add(time.Minute * 15), // Cookie expires in 1 minute
-			HttpOnly: false, // TO UPDATE LATER, must be true
-			Secure:   false, // Set to true if using HTTPS
+			HttpOnly: false,                            // TO UPDATE LATER, must be true
+			Secure:   false,                            // Set to true if using HTTPS
 			SameSite: http.SameSiteStrictMode,
 		})
 	} else {
-		return "", err;
+		return "", err
 	}
-	return token, nil;
+	return token, nil
+}
+
+func EncryptEncryptedToken(encryptedtoken string) (string, error) {
+	// expiration := time.Second * time.Duration(3600*24*7)
+	secret := os.Getenv("JWT_ENCRYPTED_SECRET_TOKEN")
+	jwt_secret := []byte(secret)
+	expiration := time.Minute * 15
+
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
+		"userId":    encryptedtoken,
+		"expiresAt": time.Now().Add(expiration).Unix(),
+	})
+
+	tokenString, err := token.SignedString(jwt_secret)
+	if err != nil {
+		return "", err
+	}
+
+	return tokenString, nil
+}
+
+func DycreptEncryptedToken(encryptedtoken string) (string, error) {
+	secret := os.Getenv("JWT_ENCRYPTED_SECRET_TOKEN")
+	jwt_secret := []byte(secret)
+	token, err := jwt.Parse(encryptedtoken, func(token *jwt.Token) (interface{}, error) {
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, fmt.Errorf("Unexpected signing method: %v", token.Header["alg"])
+		}
+		return jwt_secret, nil
+	})
+
+	if err != nil {
+		return "", err
+	}
+	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
+		return claims["userID"].(string), nil
+	}
+
+	return "", fmt.Errorf("Invalid token")
 }

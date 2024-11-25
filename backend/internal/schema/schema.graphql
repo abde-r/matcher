@@ -13,6 +13,7 @@ type User {
     pics:           String!
     token:          String!
     location:       String!
+    verified:       String!
 }
 
 input RegisterUserInput {
@@ -59,7 +60,6 @@ input ResetUserPassInput {
 type Query {
     users: [User!]!
     user(id: ID!): User
-    userByToken(token: String!): User
     posts: [Post!]!
     post(id: ID!): Post
 }

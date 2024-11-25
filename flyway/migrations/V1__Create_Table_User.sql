@@ -10,5 +10,6 @@ CREATE TABLE users (
     preferences TEXT,
     pics TEXT,
     token TEXT,
-    location TEXT
+    location TEXT,
+    verified BOOLEAN DEFAULT FALSE
 );

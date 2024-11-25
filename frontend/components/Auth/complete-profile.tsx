@@ -4,7 +4,6 @@ import React, { useState } from 'react';
 import { Card } from '@/components/ui/card';
 import 'react-datepicker/dist/react-datepicker.css';
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
 
 const formatDate = (date: Date | null): string => {
     if (!date)
@@ -34,10 +33,8 @@ export default function CompleteProfile() {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [birthday, setBirthday] = useState<Date | null>(null);
-  const [gender, setGender] = useState<string>('Men');
-  const [preferences, setPreferences] = useState<string>('Women');
+  const [preferences, setPreferences] = useState<string>('men');
   const [interests, setInterests] = useState<string[]>([]);
-  const router = useRouter();
 
   const handleAddInterest = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter' && e.currentTarget.value.trim()) {
@@ -64,34 +61,13 @@ export default function CompleteProfile() {
 
   const handleSaveProfile = () => {
     // use the api to save the profile infos
-    fetch(`${process.env.API_URL}/api/v1/users/proceed-registration`, {
-      method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        credentials: 'include',
-        body: JSON.stringify({
-          query:`
-            mutation ProceedRegistrationUser($input: ProceedRegistrationUserPayload!) { proceedRegistrationUser(input: $input) { first_name last_name birthday gender preferences} }
-          `,
-          variables: {
-            input: {
-              first_name: firstName,
-              last_name: lastName,
-              birthday: birthday,
-              gender: gender,
-              preferences: preferences
-            }
-          }
-        })
-    })
-    .then((res) => {
-      if (res.ok) {
-        router.push('/');
-      } else {
-        console.log('Error:', res)
-      }
-    })
+    console.log({
+      firstName,
+      lastName,
+      birthday: formatDate(birthday),
+      preferences,
+      interests,
+    });
   }
 
   return (
@@ -132,20 +108,6 @@ export default function CompleteProfile() {
         </div>
 
         <div className="mb-4">
-          <label className="block text-gray-700 mb-1">Gender</label>
-          <select
-            value={gender}
-            onChange={(e) =>
-              setGender(e.target.value)
-            }
-            className="w-full p-2 border rounded"
-          >
-            <option value="men">Men</option>
-            <option value="women">Women</option>
-          </select>
-        </div>
-
-        <div className="mb-4">
           <label className="block text-gray-700 mb-1">Preferences</label>
           <select
             value={preferences}
@@ -154,8 +116,8 @@ export default function CompleteProfile() {
             }
             className="w-full p-2 border rounded"
           >
-            <option value="women">Women</option>
             <option value="men">Men</option>
+            <option value="women">Women</option>
           </select>
         </div>
 
