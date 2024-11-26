@@ -4,8 +4,8 @@ import (
 	"context"
 	"errors"
 	"log"
-	"matchaVgo/internal/auth"
-	"matchaVgo/internal/store"
+	"matcher/internal/auth"
+	"matcher/internal/store"
 
 	"github.com/golang-jwt/jwt"
 )
@@ -76,6 +76,28 @@ type GraphQLUserLoginRequest struct {
 	Variables store.LoginUserPayload `json:"variables"`
 }
 
+type GraphQLError struct {
+	Message    string                 `json:"message"`
+	Path       []interface{}          `json:"path,omitempty"`
+	Extensions map[string]interface{} `json:"extensions,omitempty"`
+	StatusCode int                    `json:"statusCode"`
+}
+
+func (e *GraphQLError) Error() string {
+	return e.Message
+}
+
+
+func NewGraphQLError(message string, statusCode int) *GraphQLError {
+	return &GraphQLError{
+		Message:    message,
+		StatusCode: statusCode,
+		Extensions: map[string]interface{}{
+			"code": statusCode,
+		},
+	}
+}
+
 // Matcher-doc
 // @Summary User login
 // @Description Existed user login with username and password
@@ -84,14 +106,15 @@ type GraphQLUserLoginRequest struct {
 // @Produce json
 // @Param input body GraphQLUserLoginRequest true "GraphQL Mutation Payload"
 // @Success 200 {object} store.User
-// @Failure 400 {object} HTTPError
-// @Failure 500 {object} HTTPError
+// @Failure 400 {object} GraphQLError
+// @Failure 500 {object} GraphQLError
 // @Router /auth/login [post]
 func (r *Resolver) LoginUser(ctx context.Context, args struct{ Input store.LoginUserPayload }) (*UserResolver, error) {
 
 	user, err := store.LoginValidation(db, &args.Input)
 	if err != nil {
-		return nil, err
+		return nil, NewGraphQLError("Invalid login credentials", 401)
+		// return nil, err
 	}
 
 	token, err := auth.SetCookiza(ctx, int(user.ID))

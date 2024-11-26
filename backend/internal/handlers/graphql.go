@@ -3,7 +3,7 @@ package handlers
 import (
 	"io/ioutil"
 	"log"
-	"matchaVgo/internal/schema"
+	"matcher/internal/schema"
 	// "net/http"
 
 	"github.com/graph-gophers/graphql-go"

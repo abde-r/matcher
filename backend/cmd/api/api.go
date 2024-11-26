@@ -1,14 +1,13 @@
 package api
 
 import (
-	"io/ioutil"
 	"log"
-	_ "matchaVgo/docs"
-	"matchaVgo/internal/auth"
-	"matchaVgo/internal/db"
-	"matchaVgo/internal/schema"
-	"matchaVgo/internal/store"
-	"matchaVgo/middleware"
+	_ "matcher/docs"
+	"matcher/internal/auth"
+	"matcher/internal/db"
+	"matcher/internal/schema"
+	"matcher/internal/store"
+	"matcher/middleware"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -21,14 +20,15 @@ import (
 )
 
 func parsedSchema() *graphql.Schema {
-
-	schemaBytes, err := ioutil.ReadFile("internal/schema/schema.graphql")
+	// Read the schema file
+	schemaBytes, err := os.ReadFile("internal/schema/schema.graphql")
 	if err != nil {
 		log.Fatalf("Failed to read schema file: %s", err)
 	}
 	schemaString := string(schemaBytes)
-	return graphql.MustParseSchema(schemaString, &schema.Resolver{})
 
+	// Parse schema and return schema object
+	return graphql.MustParseSchema(schemaString, &schema.Resolver{})
 }
 
 func graphqlHandler(schema *graphql.Schema) http.Handler {

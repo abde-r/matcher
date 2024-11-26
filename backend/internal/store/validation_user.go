@@ -2,9 +2,9 @@ package store
 
 import (
 	"errors"
-	"matchaVgo/internal/auth"
+	"matcher/internal/auth"
 	// "fmt"
-	// "matchaVgo/internal/auth"
+	// "matcher/internal/auth"
 
 	"github.com/go-playground/validator"
 	"github.com/jmoiron/sqlx"

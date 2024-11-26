@@ -1,16 +1,21 @@
 'use client'
 
-import { useState } from 'react'
-import { motion } from 'framer-motion'
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import { useState } from 'react';
+import { motion } from 'framer-motion';
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { HeartIcon, XIcon } from 'lucide-react'
+import { useRouter } from 'next/navigation';
 
 export function AuthCardComponent() {
-  const [isLogin, setIsLogin] = useState(true)
-  const [dragX, setDragX] = useState(0)
+  const [isLogin, setIsLogin] = useState(true);
+  const [dragX, setDragX] = useState(0);
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const router = useRouter();
 
   const handleDragEnd = (event: MouseEvent | TouchEvent | PointerEvent, info: any) => {
     if (info.offset.x > 100) {
@@ -22,9 +27,69 @@ export function AuthCardComponent() {
   }
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault()
-    // Handle form submission here
-    console.log('Form submitted:', isLogin ? 'Login' : 'Sign Up')
+    event.preventDefault();
+    if (!isLogin) {
+      //Handle register request
+      fetch(`${process.env.API_URL}/api/v1/auth/register`, {
+        method: 'POST',
+          headers: {
+              'Content-Type': 'application/json',
+          },
+          credentials: 'include',
+          body: JSON.stringify({
+            query:`
+              mutation RegisterUser($input: RegisterUserInput!) {
+                registerUser(input: $input) {
+                  username,
+                  email,
+                  password,
+                }
+              }
+            `,
+            variables: {
+              input: {
+                username: name,
+                email: email,
+                password: password,
+              }
+            }
+          }),
+      })
+      .then((res) => {
+        if (res.ok) {
+          router.push('/complete-profile')
+        } else {
+          console.log('Error:', res)
+        }
+      })
+    } else {
+      //Handle login request
+      fetch(`${process.env.API_URL}/api/v1/auth/login`, {
+        method: 'POST',
+          headers: {
+              'Content-Type': 'application/json',
+          },
+          credentials: 'include',
+          body: JSON.stringify({
+            query:`
+              mutation LoginUser($input: LoginUserInput!) {loginUser(input: $input) { username password } }
+            `,
+            variables: {
+              input: {
+                username: name,
+                password: password,
+              }
+            }
+          }),
+      })
+      .then((res) => {
+        if (res.ok) {
+          router.push('/');
+        } else {
+          console.log('Error:', res)
+        }
+      })
+    }
   }
 
   return (
@@ -61,16 +126,16 @@ export function AuthCardComponent() {
                   {!isLogin && (
                     <div className="space-y-2">
                       <Label htmlFor="name" className="text-gray-700">Name</Label>
-                      <Input id="name" placeholder="Enter your name" required className="bg-gray-100 border-gray-300" />
+                      <Input id="name" placeholder="Enter your name" required className="bg-gray-100 border-gray-300" value={name} onChange={(e) => (setName(e.target.value))} />
                     </div>
                   )}
                   <div className="space-y-2">
                     <Label htmlFor="email" className="text-gray-700">Email</Label>
-                    <Input id="email" type="email" placeholder="Enter your email" required className="bg-gray-100 border-gray-300" />
+                    <Input id="email" type="email" placeholder="Enter your email" required className="bg-gray-100 border-gray-300" value={email} onChange={(e) => (setEmail(e.target.value))} />
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="password" className="text-gray-700">Password</Label>
-                    <Input id="password" type="password" placeholder="Enter your password" required className="bg-gray-100 border-gray-300" />
+                    <Input id="password" type="password" placeholder="Enter your password" required className="bg-gray-100 border-gray-300" value={password} onChange={(e) => (setPassword(e.target.value))} />
                   </div>
                 </div>
                 <Button className="w-full mt-6 bg-gray-800 hover:bg-gray-900 text-white">
