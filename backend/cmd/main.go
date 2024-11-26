@@ -2,8 +2,8 @@ package main
 
 import (
 	"log"
-	"matchaVgo/cmd/api"
-	_ "matchaVgo/docs"
+	"matcher/cmd/api"
+	_ "matcher/docs"
 )
 
 // @title           matcher API

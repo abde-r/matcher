@@ -4,10 +4,10 @@ import (
 	"fmt"
 	"github.com/joho/godotenv"
 	"log"
-	"matchaVgo/internal/auth"
+	"matcher/internal/auth"
 	"path/filepath"
 
-	// "matchaVgo/internal/auth"
+	// "matcher/internal/auth"
 	"os"
 
 	"github.com/jmoiron/sqlx"

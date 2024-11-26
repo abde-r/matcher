@@ -3,7 +3,7 @@ package schema
 import (
 	"context"
 
-	"matchaVgo/internal/store"
+	"matcher/internal/store"
 	"strconv"
 
 	"github.com/graph-gophers/graphql-go"

@@ -1,5 +1,5 @@
 build:
-	@go build -o bin/matcherx cmd/main.go	
+	@go build -o bin/matcherx cmd/main.go
 
 run: build
 	@./bin/matcherx

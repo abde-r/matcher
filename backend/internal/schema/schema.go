@@ -3,9 +3,9 @@ package schema
 import (
 	// "context"
 	// "log"
-	// "matchaVgo/internal/db"
-	// "matchaVgo/services/auth"
-	// "matchaVgo/utils"
+	// "matcher/internal/db"
+	// "matcher/services/auth"
+	// "matcher/utils"
 	// "os"
 	// "strconv"
 
