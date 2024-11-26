@@ -87,6 +87,7 @@ func (e *GraphQLError) Error() string {
 	return e.Message
 }
 
+
 func NewGraphQLError(message string, statusCode int) *GraphQLError {
 	return &GraphQLError{
 		Message:    message,
