@@ -70,30 +70,26 @@ func (r *Resolver) RegisterUser(ctx context.Context, args struct{ Input store.Re
 	return &UserResolver{user: &newUser}, nil
 }
 
-// GraphQLUserLoginRequest represents the structure of a GraphQL query request
+
 type GraphQLUserLoginRequest struct {
 	Query     string                 `json:"query" example:"mutation LoginUser($input: LoginUserInput!) { loginUser(input: $input) { username password } }"`
 	Variables store.LoginUserPayload `json:"variables"`
 }
 
 type GraphQLError struct {
-	Message    string                 `json:"message"`
-	Path       []interface{}          `json:"path,omitempty"`
-	Extensions map[string]interface{} `json:"extensions,omitempty"`
-	StatusCode int                    `json:"statusCode"`
+    Message    string                 `json:"message"`
+    Extensions map[string]interface{} `json:"extensions"`
 }
 
 func (e *GraphQLError) Error() string {
-	return e.Message
+    return e.Message
 }
-
 
 func NewGraphQLError(message string, statusCode int) *GraphQLError {
 	return &GraphQLError{
-		Message:    message,
-		StatusCode: statusCode,
+		Message: message,
 		Extensions: map[string]interface{}{
-			"code": statusCode,
+			"statusCode": statusCode,
 		},
 	}
 }

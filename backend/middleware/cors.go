@@ -1,9 +1,7 @@
 package middleware
 
 import (
-	"context"
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"os"
 
@@ -56,85 +54,111 @@ func CORS(router *mux.Router) http.Handler {
 // 	return nil, false
 // }
 
+type customResponseWriter struct {
+    http.ResponseWriter
+    statusCode int
+    body       []byte
+}
+
+func (c *customResponseWriter) WriteHeader(statusCode int) {
+    c.statusCode = statusCode
+    c.ResponseWriter.WriteHeader(statusCode)
+}
+
+func (c *customResponseWriter) Write(data []byte) (int, error) {
+    c.body = append(c.body, data...)
+    return c.ResponseWriter.Write(data)
+}
+
 func CustomHTTPMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		// Wrap the ResponseWriter to intercept the status code
-		wrappedWriter := &responseWriterWrapper{ResponseWriter: w}
+		customWriter := &customResponseWriter{ResponseWriter: w}
+		next.ServeHTTP(customWriter, r)
 
-		// Call the next handler in the chain
-		next.ServeHTTP(wrappedWriter, r)
-
-		// Check for errors in the response context
-		if wrappedWriter.statusCode == 0 {
-			// Default status code in case no status is set
-			wrappedWriter.statusCode = http.StatusOK
+		var response struct {
+			Data   interface{}              `json:"data"`
+			Errors []map[string]interface{} `json:"errors"`
 		}
 
-		// Check if the response contains GraphQL errors (you may need to inspect the response body)
-		if wrappedWriter.statusCode == http.StatusUnauthorized {
-			// In this case, set the status code for the error explicitly
-			// If the response contains errors, you can enrich it with your custom logic
-			if err := wrappedWriter.setErrorCode(r.Context(), http.StatusUnauthorized); err != nil {
-				fmt.Printf("Error while setting error code: %v", err)
+		// Parse the response body
+		if err := json.Unmarshal(customWriter.body, &response); err == nil && len(response.Errors) > 0 {
+			for _, err := range response.Errors {
+				// Add statusCode only if it's not already present
+				if extensions, ok := err["extensions"].(map[string]interface{}); ok {
+					if _, hasStatusCode := extensions["statusCode"]; !hasStatusCode {
+						if code, ok := extensions["code"].(float64); ok {
+							extensions["statusCode"] = int(code)
+						} else {
+							extensions["statusCode"] = http.StatusInternalServerError
+						}
+					}
+				} else {
+					err["extensions"] = map[string]interface{}{
+						"statusCode": http.StatusInternalServerError,
+					}
+				}
 			}
+
+			// Re-marshal and overwrite the response
+			customWriter.body, _ = json.Marshal(response)
+			customWriter.ResponseWriter.Header().Set("Content-Type", "application/json")
+			customWriter.ResponseWriter.WriteHeader(customWriter.statusCode)
+			customWriter.ResponseWriter.Write(customWriter.body)
 		}
-
-		// Log the final status code for debugging
-		fmt.Printf("Final Response Status Code: %d\n", wrappedWriter.statusCode)
-
-		// Write the final status code to the ResponseWriter
-		w.WriteHeader(wrappedWriter.statusCode)
 	})
 }
 
-type responseWriterWrapper struct {
-	http.ResponseWriter
-	statusCode int
-	body       []byte // Capture the response body
-}
 
-func (rw *responseWriterWrapper) WriteHeader(code int) {
-	rw.statusCode = code
-	rw.ResponseWriter.WriteHeader(code)
-}
 
-func (rw *responseWriterWrapper) Write(p []byte) (n int, err error) {
-	// Capture the body of the response
-	rw.body = append(rw.body, p...)
-	return rw.ResponseWriter.Write(p)
-}
 
-// Method to enrich the error response
-func (rw *responseWriterWrapper) setErrorCode(_ context.Context, code int) error {
-	// Example: Set the status code on errors
-	if rw.body != nil && len(rw.body) > 0 {
-		// You can parse the response body and add the `status_code` to errors here
-		// For simplicity, let's assume we're modifying the GraphQL error response
+// type responseWriterWrapper struct {
+// 	http.ResponseWriter
+// 	statusCode int
+// 	body       []byte // Capture the response body
+// }
 
-		var graphQLResponse map[string]interface{}
-		if err := json.Unmarshal(rw.body, &graphQLResponse); err != nil {
-			return fmt.Errorf("failed to unmarshal response body: %v", err)
-		}
+// func (rw *responseWriterWrapper) WriteHeader(code int) {
+// 	rw.statusCode = code
+// 	rw.ResponseWriter.WriteHeader(code)
+// }
 
-		if errors, exists := graphQLResponse["errors"]; exists {
-			// Assuming errors are of type []interface{}
-			for _, errItem := range errors.([]interface{}) {
-				if errMap, ok := errItem.(map[string]interface{}); ok {
-					errMap["status_code"] = code // Add your custom status code here
-				}
-			}
-		}
+// func (rw *responseWriterWrapper) Write(p []byte) (n int, err error) {
+// 	// Capture the body of the response
+// 	rw.body = append(rw.body, p...)
+// 	return rw.ResponseWriter.Write(p)
+// }
 
-		// Re-encode the modified response back into the body
-		updatedBody, err := json.Marshal(graphQLResponse)
-		if err != nil {
-			return fmt.Errorf("failed to marshal updated response: %v", err)
-		}
+// // Method to enrich the error response
+// func (rw *responseWriterWrapper) setErrorCode(_ context.Context, code int) error {
+// 	// Example: Set the status code on errors
+// 	if rw.body != nil && len(rw.body) > 0 {
+// 		// You can parse the response body and add the `status_code` to errors here
+// 		// For simplicity, let's assume we're modifying the GraphQL error response
 
-		// Write the modified body back to the ResponseWriter
-		rw.body = updatedBody
-	}
+// 		var graphQLResponse map[string]interface{}
+// 		if err := json.Unmarshal(rw.body, &graphQLResponse); err != nil {
+// 			return fmt.Errorf("failed to unmarshal response body: %v", err)
+// 		}
 
-	return nil
-}
+// 		if errors, exists := graphQLResponse["errors"]; exists {
+// 			// Assuming errors are of type []interface{}
+// 			for _, errItem := range errors.([]interface{}) {
+// 				if errMap, ok := errItem.(map[string]interface{}); ok {
+// 					errMap["status_code"] = code // Add your custom status code here
+// 				}
+// 			}
+// 		}
+
+// 		// Re-encode the modified response back into the body
+// 		updatedBody, err := json.Marshal(graphQLResponse)
+// 		if err != nil {
+// 			return fmt.Errorf("failed to marshal updated response: %v", err)
+// 		}
+
+// 		// Write the modified body back to the ResponseWriter
+// 		rw.body = updatedBody
+// 	}
+
+// 	return nil
+// }
 

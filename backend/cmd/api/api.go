@@ -75,7 +75,8 @@ func Ga33ad_server() error {
 
 	// Subrouter for auth
 	authRouter := apiRouter.PathPrefix("/auth").Subrouter()
-	authRouter.Handle("/login", graphqlHandler(parsedSchema)).Methods("POST")
+	// authRouter.Handle("/login", graphqlHandler(parsedSchema)).Methods("POST")
+	authRouter.Handle("/login", middleware.CustomHTTPMiddleware(graphqlHandler(parsedSchema))).Methods("POST")
 	authRouter.Handle("/register", graphqlHandler(parsedSchema)).Methods("POST")
 	authRouter.Handle("/send-verification-email", graphqlHandler(parsedSchema)).Methods("POST")
 	authRouter.Handle("/account-verification", graphqlHandler(parsedSchema)).Methods("POST")

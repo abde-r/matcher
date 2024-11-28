@@ -1,4 +1,4 @@
-FROM golang:1.22.1-alpine AS build
+FROM golang:1.23.3-alpine AS build
 
 # Set environment variables
 ENV CGO_ENABLED=0 GOOS=linux GOARCH=amd64
